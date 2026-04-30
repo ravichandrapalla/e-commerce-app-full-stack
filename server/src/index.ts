@@ -1,9 +1,9 @@
 // responsible for server startup only
 
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
 dotenv.config();
 
-import app from "./app";
+const app = require("./app").default;
 
 const PORT = process.env.PORT || 5000;
 

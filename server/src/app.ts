@@ -1,5 +1,4 @@
 // app config only
-
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -18,8 +17,8 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.get("api/v1/health", (req, res) => {
+app.get("/api/v1/health", (req, res) => {
   res.json({ message: "Server is running" });
 });
 
-export default app;
+module.exports = app;
