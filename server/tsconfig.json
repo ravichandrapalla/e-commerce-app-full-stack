@@ -8,8 +8,9 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "es2022",
-    "target": "es2023",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "target": "es2022",
     "types": ["node"],
     // For nodejs:
     // "lib": ["esnext"],
@@ -36,7 +37,7 @@
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",

@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+import { prism } from "./config/db";
 
 const app = express();
 
@@ -17,8 +18,10 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.get("/api/v1/health", (req, res) => {
-  res.json({ message: "Server is running" });
+app.get("/api/v1/health", async (req, res) => {
+  const users = await prism.user.count();
+
+  res.json({ message: "Server is running", users });
 });
 
-module.exports = app;
+export default app;
