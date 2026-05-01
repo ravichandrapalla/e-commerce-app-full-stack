@@ -5,3 +5,9 @@ export const signToken = (payload: object) => {
     expiresIn: "7d",
   });
 };
+
+export const verifyToken = (token: string) => {
+  return jwt.verify(token, process.env.JWT_SECRET as string) as {
+    userId: string;
+  };
+};

@@ -1,6 +1,8 @@
 import { Response, Request } from "express";
 import { loginSchema, registerSchema } from "./auth.validation";
 import { loginUser, registerUser } from "./auth.service";
+import { AuthRequest } from "../../middlewares/auth.middleware";
+import { prisma } from "../../config/db";
 
 const cookieOptions = {
   httpOnly: true,
@@ -29,6 +31,19 @@ export const login = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(400).json({ message: error.message });
   }
+};
+
+export const getSelf = async (req: AuthRequest, res: Response) => {
+  const user = await prisma.user.findUnique({
+    where: { id: req.user!.id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+    },
+  });
+  res.json({ user });
 };
 
 export const logout = (eq: Request, res: Response) => {
