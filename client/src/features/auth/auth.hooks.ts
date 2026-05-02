@@ -7,25 +7,25 @@ import {
 } from "../../services/auth.service";
 
 export const useRegister = () => {
-  useMutation({
+  return useMutation({
     mutationFn: registerApi,
   });
 };
 
 export const useLogin = () => {
-  useMutation({
+  return useMutation({
     mutationFn: loginApi,
   });
 };
 
 export const useLogout = () => {
-  useMutation({
+  return useMutation({
     mutationFn: logoutApi,
   });
 };
 
 export const useSelf = () => {
-  useQuery({
+  return useQuery({
     queryKey: ["self"],
     queryFn: async () => {
       const res = await getSelfApi();
