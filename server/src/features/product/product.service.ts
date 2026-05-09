@@ -45,3 +45,12 @@ export const getProducts = async (query: any) => {
     pages: Math.ceil(total / limit),
   };
 };
+
+export const getProductById = async (id: string) => {
+  return prisma.product.findUnique({
+    where: { id },
+    include: {
+      category: true,
+    },
+  });
+};
