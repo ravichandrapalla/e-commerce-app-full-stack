@@ -7,6 +7,7 @@ import {
 } from "../features/auth/auth.schema";
 import { Button } from "../components/ui/button";
 import { useRegister } from "../features/auth/auth.hooks";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
   const formMethods = useForm({
@@ -15,8 +16,12 @@ export default function RegisterPage() {
   const { register, handleSubmit } = formMethods;
 
   const registrationMutation = useRegister();
+  const navigate = useNavigate();
   const onSubmit = async (data: registrationType) => {
     const res = await registrationMutation.mutateAsync(data);
+    if (res.status === 201) {
+      navigate("/login");
+    }
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-3">

@@ -6,7 +6,7 @@ import { useLogin } from "../features/auth/auth.hooks";
 import { setUser } from "../features/auth/auth.slice";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm({
@@ -15,10 +15,12 @@ export default function LoginPage() {
 
   const loginMutation = useLogin();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onSubmit = async (data: any) => {
     const res = await loginMutation.mutateAsync(data);
     dispatch(setUser(res.data.user));
+    navigate("/");
   };
 
   return (

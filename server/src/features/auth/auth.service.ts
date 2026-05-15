@@ -29,9 +29,9 @@ export const registerUser = async (data: registerPayloadType) => {
       password: hashedPassword,
     },
   });
-  const token = signToken({ userId: user.id });
+  // const token = signToken({ userId: user.id });
 
-  return { user, token };
+  return { user };
 };
 
 export const loginUser = async (data: loginPayloadType) => {

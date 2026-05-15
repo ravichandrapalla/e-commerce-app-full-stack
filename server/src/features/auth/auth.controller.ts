@@ -13,10 +13,11 @@ const cookieOptions = {
 export const register = async (req: Request, res: Response) => {
   try {
     const parsed = registerSchema.parse(req.body);
-    const { user, token } = await registerUser(parsed);
-    res.cookie("token", token, cookieOptions);
+    const { user } = await registerUser(parsed);
+    // res.cookie("token", token, cookieOptions);
+    if (user) res.status(201).json({ message: "User Registration Successful" });
 
-    res.json({ user });
+    // res.json({ user });
   } catch (error: any) {
     res.status(400).json({ message: error.message });
   }
