@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
-  getProductsApi,
   createProductApi,
+  getProductsApi,
 } from "../../services/product.service";
 
 export const useProducts = (params: any) =>

@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../store/store";
+
 import { clearUser } from "../../features/auth/auth.slice";
 import { logoutApi } from "../../services/auth.service";
+import type { RootState } from "../../store/store";
 
 export default function Navbar() {
   const { user } = useSelector((state: RootState) => state.auth);

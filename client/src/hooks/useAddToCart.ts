@@ -18,5 +18,19 @@ export const useAddToCart = () => {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["cart"] });
     },
+    onMutate: async (newItem) => {
+      await qc.cancelQueries({
+        queryKey: ["cart"],
+      });
+
+      const previous = qc.getQueryData(["cart"]);
+
+      qc.setQueryData(["cart"], (old: any) => {
+        return {
+          ...old,
+        };
+      });
+      return { previous };
+    },
   });
 };

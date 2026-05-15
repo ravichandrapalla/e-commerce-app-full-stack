@@ -63,6 +63,15 @@ export default function ProductsPage() {
           ))}
         </div>
       )}
+      <div className="flex gap-3 mt-6">
+        <button onClick={() => set("page", String(Number(params.page) - 1))}>
+          Prev
+        </button>
+
+        <button onClick={() => set("page", String(Number(params.page) + 1))}>
+          Next
+        </button>
+      </div>
     </div>
   );
 }

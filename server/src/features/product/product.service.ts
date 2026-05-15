@@ -54,3 +54,15 @@ export const getProductById = async (id: string) => {
     },
   });
 };
+export const updateProduct = async (id: string, data: any) => {
+  return prisma.product.update({
+    where: { id },
+    data,
+  });
+};
+
+export const deleteProduct = async (id: string) => {
+  return prisma.product.delete({
+    where: { id },
+  });
+};

@@ -1,4 +1,4 @@
-import { useCart } from "../features/cart/cart.hooks";
+import { useCart } from "../hooks/useAddToCart";
 import { useCheckout } from "../hooks/useCheckout";
 
 export default function CartPage() {

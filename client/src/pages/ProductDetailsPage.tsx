@@ -1,12 +1,13 @@
 import { useParams } from "react-router-dom";
-import { useProduct } from "../features/product/product.hooks";
-import PageContainer from "../components/PageContainer";
-import { useAddToCart } from "../features/cart/cart.hooks";
+
+import PageContainer from "../components/ui/PageContainer";
+import { useAddToCart } from "../hooks/useAddToCart";
+import { useProducts } from "../features/product/product.hooks";
 
 export default function ProductDetailsPage() {
   const { id = "" } = useParams();
 
-  const { data, isLoading } = useProduct(id);
+  const { data, isLoading } = useProducts(id);
 
   const addToCart = useAddToCart();
 

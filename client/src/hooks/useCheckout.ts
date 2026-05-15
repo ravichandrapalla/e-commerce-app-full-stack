@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { checkoutApi, getOrdersApi } from "../../services/order.service";
+import { checkoutApi, getOrdersApi } from "../features/order/order.service";
 
 export const useCheckout = () => {
   const qc = useQueryClient();

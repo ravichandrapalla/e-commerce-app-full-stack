@@ -1,9 +1,29 @@
 import { Request, Response } from "express";
-import { createProduct, getProductById, getProducts } from "./product.service";
+import {
+  createProduct,
+  deleteProduct,
+  getProductById,
+  getProducts,
+  updateProduct,
+} from "./product.service";
 import { createProductSchema, querySchema } from "./product.validation";
+import { uploadImage } from "../../utils/uploadImage";
 
 export const create = async (req: Request, res: Response) => {
-  const parsed = createProductSchema.parse(req.body);
+  let imageUrl = "";
+
+  if (req.file) {
+    const uploaded: any = await uploadImage(req.file.buffer);
+
+    imageUrl = uploaded.secure_url;
+  }
+
+  const parsed = createProductSchema.parse({
+    ...req.body,
+    price: Number(req.body.price),
+    stock: Number(req.body.stock),
+    imageUrl,
+  });
 
   const product = await createProduct(parsed);
 
@@ -19,7 +39,7 @@ export const list = async (req: Request, res: Response) => {
 };
 
 export const getOne = async (req: Request, res: Response) => {
-  const product = await getProductById(req.params.id);
+  const product = await getProductById(req.params.id as string);
 
   if (!product) {
     return res.status(404).json({
@@ -28,4 +48,17 @@ export const getOne = async (req: Request, res: Response) => {
   }
 
   res.json(product);
+};
+export const update = async (req: Request, res: Response) => {
+  const product = await updateProduct(req.params.id as string, req.body);
+
+  res.json(product);
+};
+
+export const remove = async (req: Request, res: Response) => {
+  await deleteProduct(req.params.id as string);
+
+  res.json({
+    success: true,
+  });
 };
