@@ -1,4 +1,5 @@
 import { Outlet, Link } from "react-router-dom";
+import { adminLinks } from "../constants/adminLinks";
 
 export default function AdminLayout() {
   return (
@@ -8,13 +9,18 @@ export default function AdminLayout() {
         <h2 className="text-2xl font-bold mb-8">Admin</h2>
 
         <nav className="space-y-3">
-          <Link to="/admin" className="block">
+          {/* <Link to="/admin" className="block">
             Dashboard
           </Link>
 
           <Link to="/admin/products" className="block">
             Products
-          </Link>
+          </Link> */}
+          {adminLinks.map((link) => (
+            <Link to={link.path} className="block">
+              {link.label}
+            </Link>
+          ))}
         </nav>
       </aside>
 

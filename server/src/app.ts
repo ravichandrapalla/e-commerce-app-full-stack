@@ -9,6 +9,7 @@ import productRoutes from "./features/product/product.routes";
 import cartRoutes from "./features/cart/cart.routes";
 import orderRoutes from "./features/order/order.routes";
 import adminRoutes from "./features/admin/admin.route";
+import categoryRoutes from "./features/category/category.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 
 const app = express();
@@ -28,6 +29,7 @@ app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/categories", categoryRoutes);
 
 app.use(errorHandler);
 

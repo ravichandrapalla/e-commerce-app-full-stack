@@ -8,6 +8,8 @@ export default function ProductDetailsPage() {
   const { id = "" } = useParams();
 
   const { data, isLoading } = useProducts(id);
+  console.log("data", data);
+  const product = data?.products[0] || {};
 
   const addToCart = useAddToCart();
 
@@ -16,22 +18,19 @@ export default function ProductDetailsPage() {
   return (
     <PageContainer>
       <div className="grid md:grid-cols-2 gap-8">
-        <img
-          src={data.imageUrl || "https://via.placeholder.com/400"}
-          className="rounded-xl w-full"
-        />
+        <img src={product?.imageUrl || ""} className="rounded-xl w-full" />
 
         <div>
-          <h1 className="text-3xl font-bold">{data.title}</h1>
+          <h1 className="text-3xl font-bold">{product?.title}</h1>
 
-          <p className="mt-4 text-slate-600">{data.description}</p>
+          <p className="mt-4 text-slate-600">{product?.description}</p>
 
-          <p className="mt-6 text-2xl font-bold">₹{data.price}</p>
+          <p className="mt-6 text-2xl font-bold">₹{product?.price}</p>
 
           <button
             onClick={() =>
               addToCart.mutate({
-                productId: data.id,
+                productId: product?.id,
                 quantity: 1,
               })
             }

@@ -10,6 +10,8 @@ import AdminLayout from "../layouts/AdminLayout";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminProductsPage from "../pages/admin/AdminProductsPage";
 import RegisterPage from "../pages/RegisterPage";
+import CreateProductPage from "../pages/admin/CreateProductPage";
+import OrdersPage from "../pages/OrdersPage";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +41,10 @@ export const router = createBrowserRouter([
             path: "products",
             element: <AdminProductsPage />,
           },
+          {
+            path: "products/create",
+            element: <CreateProductPage />,
+          },
         ],
       },
       {
@@ -54,6 +60,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <CartPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/orders",
+        element: (
+          <ProtectedRoute>
+            <OrdersPage />
           </ProtectedRoute>
         ),
       },

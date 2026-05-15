@@ -3,7 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { clearUser } from "../../features/auth/auth.slice";
 import { logoutApi } from "../../services/auth.service";
+
 import type { RootState } from "../../store/store";
+import { adminLinks } from "../../constants/adminLinks";
 
 export default function Navbar() {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -22,7 +24,7 @@ export default function Navbar() {
         </Link>
 
         <nav className="flex items-center gap-4">
-          <Link to="/products">Products</Link>
+          <Link to="/">Products</Link>
 
           {user && (
             <>
