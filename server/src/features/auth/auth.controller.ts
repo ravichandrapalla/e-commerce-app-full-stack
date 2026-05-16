@@ -4,10 +4,12 @@ import { loginUser, registerUser } from "./auth.service";
 import { AuthRequest } from "../../middlewares/auth.middleware";
 import { prisma } from "../../config/db";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const cookieOptions = {
   httpOnly: true,
-  secure: false,
-  sameSite: "lax" as const,
+  secure: isProduction,
+  sameSite: (isProduction ? "none" : "lax") as "none" | "lax",
 };
 
 export const register = async (req: Request, res: Response) => {

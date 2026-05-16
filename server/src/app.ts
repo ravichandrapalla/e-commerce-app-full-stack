@@ -11,6 +11,7 @@ import orderRoutes from "./features/order/order.routes";
 import adminRoutes from "./features/admin/admin.route";
 import categoryRoutes from "./features/category/category.routes";
 import { errorHandler } from "./middlewares/error.middleware";
+import rateLimit from "express-rate-limit";
 
 const app = express();
 
@@ -31,6 +32,11 @@ app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+});
+app.use(limiter);
 app.use(errorHandler);
 
 export default app;

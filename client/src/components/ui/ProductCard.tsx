@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { useAddToCart } from "../../hooks/useAddToCart";
+import AddToCart from "./AddToCart";
 
 export default function ProductCard({ product }: any) {
   const addToCart = useAddToCart();
   return (
-    <Link to={`/products/${product.id}`}>
-      <div className="border rounded-xl p-4 shadow-sm hover:shadow-md transition">
+    <div className="flex flex-col justify-center border rounded-xl p-4 shadow-sm hover:shadow-md transition">
+      <Link to={`/products/${product.id}`}>
         <img
           src={product.imageUrl || "https://via.placeholder.com/200"}
           className="w-full h-40 object-cover rounded"
@@ -15,14 +16,16 @@ export default function ProductCard({ product }: any) {
           {product.description}
         </p>
         <p className="mt-2 font-bold">₹{product.price}</p>
-        <button
+      </Link>
+
+      {/* <button
           onClick={() =>
             addToCart.mutate({ productId: product.id, quantity: 1 })
           }
         >
           Add to Cart
-        </button>
-      </div>
-    </Link>
+        </button> */}
+      <AddToCart product={product} />
+    </div>
   );
 }
