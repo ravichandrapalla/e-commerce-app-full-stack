@@ -3,6 +3,11 @@ export type Category = {
   name: string;
 };
 
+export type ProductSeller = {
+  id: string;
+  name: string;
+};
+
 export type Product = {
   id: string;
   title: string;
@@ -13,6 +18,8 @@ export type Product = {
   isPublished: boolean;
   categoryId?: string;
   category?: Category;
+  sellerId?: string;
+  seller?: ProductSeller;
 };
 
 export type ProductSearchParams = {
@@ -100,13 +107,38 @@ export type AdminOrder = Order & {
 };
 
 export type DashboardStats = {
-  users: number;
+  buyers: number;
+  sellers: number;
   products: number;
   lowStockProducts: number;
   outOfStockProducts: number;
   orders: number;
   pendingFulfillment: number;
   revenue: number;
+};
+
+export type SellerDashboardStats = {
+  products: number;
+  lowStockProducts: number;
+  outOfStockProducts: number;
+  orders: number;
+  pendingFulfillment: number;
+  revenue: number;
+};
+
+export type SellerOrder = {
+  id: string;
+  status: OrderStatus;
+  totalAmount: number;
+  sellerSubtotal: number;
+  createdAt: string;
+  updatedAt: string;
+  buyer: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  items: OrderItem[];
 };
 
 export type CheckoutResponse = {

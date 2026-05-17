@@ -1,5 +1,9 @@
 import { Response, Request } from "express";
-import { loginSchema, registerSchema } from "./auth.validation";
+import {
+  accountTypeToRole,
+  loginSchema,
+  registerSchema,
+} from "./auth.validation";
 import { loginUser, registerUser, updateUserProfile } from "./auth.service";
 import { updateProfileSchema } from "./auth.validation";
 import { AuthRequest } from "../../middlewares/auth.middleware";
@@ -18,7 +22,12 @@ const cookieOptions = {
 export const register = async (req: Request, res: Response) => {
   try {
     const parsed = registerSchema.parse(req.body);
-    const { user } = await registerUser(parsed);
+    const { user } = await registerUser({
+      name: parsed.name,
+      email: parsed.email,
+      password: parsed.password,
+      role: accountTypeToRole(parsed.accountType),
+    });
     // res.cookie("token", token, cookieOptions);
     if (user) res.status(201).json({ message: "User Registration Successful" });
 

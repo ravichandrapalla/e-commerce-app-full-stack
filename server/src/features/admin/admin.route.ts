@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { protect } from "../../middlewares/auth.middleware";
 import { restrictTo } from "../../middlewares/role.middleware";
+import { ROLES } from "../../constants/roles";
 import {
   getAdminOrders,
   getDashboardStats,
@@ -9,8 +10,7 @@ import {
 
 const router = Router();
 
-router.use(protect);
-router.use(restrictTo("ADMIN"));
+router.use(protect, restrictTo(ROLES.ADMIN));
 
 router.get("/stats", getDashboardStats);
 router.get("/orders", getAdminOrders);

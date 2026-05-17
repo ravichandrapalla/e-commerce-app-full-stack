@@ -4,6 +4,7 @@ type registerPayloadType = {
   name: string;
   email: string;
   password: string;
+  accountType: "buyer" | "seller";
 };
 
 type loginPayloadType = {

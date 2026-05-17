@@ -8,6 +8,8 @@ import ProfilePage from "../pages/ProfilePage";
 import ProductDetailsPage from "../pages/ProductDetailsPage";
 import CartPage from "../pages/CartPage";
 import AdminRoute from "./AdminRoute";
+import SellerRoute from "./SellerRoute";
+import BuyerRoute from "./BuyerRoute";
 import AdminLayout from "../layouts/AdminLayout";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminProductsPage from "../pages/admin/AdminProductsPage";
@@ -19,6 +21,11 @@ import CheckoutSuccessPage from "../pages/CheckoutSuccessPage";
 import CheckoutCancelPage from "../pages/CheckoutCancelPage";
 import DemoCheckoutPage from "../pages/DemoCheckoutPage";
 import CheckoutPage from "../pages/CheckoutPage";
+import SellerLayout from "../layouts/SellerLayout";
+import SellerDashboardPage from "../pages/seller/SellerDashboardPage";
+import SellerProductsPage from "../pages/seller/SellerProductsPage";
+import SellerOrdersPage from "../pages/seller/SellerOrdersPage";
+import SellerCreateProductPage from "../pages/seller/SellerCreateProductPage";
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +39,20 @@ export const router = createBrowserRouter([
   {
     element: <MainLayout />,
     children: [
+      {
+        path: "/seller",
+        element: (
+          <SellerRoute>
+            <SellerLayout />
+          </SellerRoute>
+        ),
+        children: [
+          { index: true, element: <SellerDashboardPage /> },
+          { path: "products", element: <SellerProductsPage /> },
+          { path: "orders", element: <SellerOrdersPage /> },
+          { path: "products/create", element: <SellerCreateProductPage /> },
+        ],
+      },
       {
         path: "/admin",
         element: (
@@ -81,49 +102,49 @@ export const router = createBrowserRouter([
       {
         path: "/cart",
         element: (
-          <ProtectedRoute>
+          <BuyerRoute>
             <CartPage />
-          </ProtectedRoute>
+          </BuyerRoute>
         ),
       },
       {
         path: "/checkout",
         element: (
-          <ProtectedRoute>
+          <BuyerRoute>
             <CheckoutPage />
-          </ProtectedRoute>
+          </BuyerRoute>
         ),
       },
       {
         path: "/orders",
         element: (
-          <ProtectedRoute>
+          <BuyerRoute>
             <OrdersPage />
-          </ProtectedRoute>
+          </BuyerRoute>
         ),
       },
       {
         path: "/checkout/demo",
         element: (
-          <ProtectedRoute>
+          <BuyerRoute>
             <DemoCheckoutPage />
-          </ProtectedRoute>
+          </BuyerRoute>
         ),
       },
       {
         path: "/checkout/success",
         element: (
-          <ProtectedRoute>
+          <BuyerRoute>
             <CheckoutSuccessPage />
-          </ProtectedRoute>
+          </BuyerRoute>
         ),
       },
       {
         path: "/checkout/cancel",
         element: (
-          <ProtectedRoute>
+          <BuyerRoute>
             <CheckoutCancelPage />
-          </ProtectedRoute>
+          </BuyerRoute>
         ),
       },
     ],

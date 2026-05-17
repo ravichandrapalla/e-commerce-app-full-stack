@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Product } from "../../types/ecommerce";
-import { PRODUCT_IMAGE_FALLBACK } from "../../constants/images";
+import { resolveProductImageUrl } from "../../lib/productImage";
 import { typography } from "../../lib/typography";
 import AddToCart from "./AddToCart";
 import { cn } from "../../lib/utils";
@@ -43,7 +43,7 @@ export default function ProductCard({
       >
         <div className="overflow-hidden bg-slate-100">
           <img
-            src={product.imageUrl || PRODUCT_IMAGE_FALLBACK}
+            src={resolveProductImageUrl(product.imageUrl)}
             alt={product.title}
             className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-105"
             loading="lazy"

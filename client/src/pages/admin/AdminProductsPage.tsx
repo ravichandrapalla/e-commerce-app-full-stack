@@ -6,6 +6,7 @@ import {
   useUpdateProduct,
 } from "../../features/product/product.hooks";
 import type { Product } from "../../types/ecommerce";
+import { resolveProductImageUrl } from "../../lib/productImage";
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("en-IN", {
@@ -138,10 +139,7 @@ export default function AdminProductsPage() {
                 <td className="p-4">
                   <div className="flex items-center gap-3">
                     <img
-                      src={
-                        product.imageUrl ||
-                        "https://placehold.co/96x96?text=Product"
-                      }
+                      src={resolveProductImageUrl(product.imageUrl)}
                       alt=""
                       className="size-12 rounded-md object-cover"
                     />

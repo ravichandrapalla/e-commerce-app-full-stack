@@ -46,18 +46,20 @@ export default function OrdersPage() {
 
   if (data.length === 0) {
     return (
-      <PageContainer className="py-16 text-center">
-        <PageHeader
-          title={copy.orders.emptyTitle}
-          description={copy.orders.emptyDescription}
-          className="mx-auto max-w-md justify-center text-center [&_p]:mx-auto"
-        />
-        <Link
-          to="/products"
-          className="mt-8 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-        >
-          {copy.orders.continueShopping}
-        </Link>
+      <PageContainer className="flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center py-16">
+        <div className="mx-auto w-full max-w-md text-center">
+          <PageHeader
+            title={copy.orders.emptyTitle}
+            description={copy.orders.emptyDescription}
+            className="w-full flex-col items-center sm:flex-col sm:items-center [&_p]:mx-auto"
+          />
+          <Link
+            to="/products"
+            className="mt-8 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+          >
+            {copy.orders.continueShopping}
+          </Link>
+        </div>
       </PageContainer>
     );
   }

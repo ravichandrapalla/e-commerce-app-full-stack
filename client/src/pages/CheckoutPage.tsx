@@ -15,7 +15,7 @@ import {
   type ShippingAddressFormValues,
 } from "../features/order/checkout.schema";
 import { copy } from "../constants/copy";
-import { PRODUCT_IMAGE_FALLBACK } from "../constants/images";
+import { resolveProductImageUrl } from "../lib/productImage";
 import type { RootState } from "../store/store";
 
 const formatCurrency = (amount: number) =>
@@ -199,7 +199,7 @@ export default function CheckoutPage() {
             {items.map((item) => (
               <li key={item.id} className="flex gap-3 py-3 first:pt-0 last:pb-0">
                 <img
-                  src={item.product.imageUrl || PRODUCT_IMAGE_FALLBACK}
+                  src={resolveProductImageUrl(item.product.imageUrl)}
                   alt=""
                   className="size-14 rounded-md object-cover"
                 />

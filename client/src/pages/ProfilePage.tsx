@@ -7,6 +7,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useUpdateProfile } from "../features/auth/auth.hooks";
 import { setUser } from "../features/auth/auth.slice";
+import { toAuthUser } from "../types/auth";
 import type { RootState } from "../store/store";
 import PageContainer from "../components/ui/PageContainer";
 import { PageHeader } from "../components/ui/typography";
@@ -76,7 +77,7 @@ export default function ProfilePage() {
       }
 
       const res = await updateProfile.mutateAsync(formData);
-      dispatch(setUser(res.data.user));
+      dispatch(setUser(toAuthUser(res.data.user)));
       setAvatarFile(null);
       toast.success(labels.success);
     } catch {

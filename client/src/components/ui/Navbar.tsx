@@ -17,6 +17,7 @@ import UserMenu from "./UserMenu";
 import UserAvatar from "./UserAvatar";
 import { STORE_NAME } from "../../constants/brand";
 import { copy } from "../../constants/copy";
+import { isAdmin, isBuyer, isSeller } from "../../types/auth";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
@@ -28,7 +29,7 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
 
 export default function Navbar() {
   const { user } = useSelector((state: RootState) => state.auth);
-  const { data } = useCart(Boolean(user));
+  const { data } = useCart(Boolean(user && isBuyer(user.role)));
   const dispatch = useDispatch();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -65,7 +66,7 @@ export default function Navbar() {
             {copy.nav.products}
           </NavLink>
 
-          {user && (
+          {user && isBuyer(user.role) && (
             <>
               <NavLink to="/orders" className={navLinkClass}>
                 {copy.nav.orders}
@@ -88,7 +89,13 @@ export default function Navbar() {
             </>
           )}
 
-          {user?.role === "ADMIN" && (
+          {user && isSeller(user.role) && (
+            <NavLink to="/seller" className={navLinkClass}>
+              {copy.nav.seller}
+            </NavLink>
+          )}
+
+          {user && isAdmin(user.role) && (
             <NavLink to="/admin" className={navLinkClass}>
               {copy.nav.admin}
             </NavLink>
@@ -109,7 +116,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2 md:hidden">
-          {user && (
+          {user && isBuyer(user.role) && (
             <Link
               to="/cart"
               onClick={closeMobile}
@@ -149,12 +156,17 @@ export default function Navbar() {
             <NavLink to="/products" onClick={closeMobile} className={navLinkClass}>
               Products
             </NavLink>
-            {user && (
+            {user && isBuyer(user.role) && (
               <NavLink to="/orders" onClick={closeMobile} className={navLinkClass}>
                 {copy.nav.orders}
               </NavLink>
             )}
-            {user?.role === "ADMIN" && (
+            {user && isSeller(user.role) && (
+              <NavLink to="/seller" onClick={closeMobile} className={navLinkClass}>
+                {copy.nav.seller}
+              </NavLink>
+            )}
+            {user && isAdmin(user.role) && (
               <NavLink to="/admin" onClick={closeMobile} className={navLinkClass}>
                 {copy.nav.admin}
               </NavLink>

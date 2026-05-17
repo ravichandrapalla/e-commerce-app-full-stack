@@ -1,4 +1,6 @@
+import type { Role } from "@prisma/client";
 import { prisma } from "../../config/db";
+import { normalizeRole, ROLES, type RoleName } from "../../constants/roles";
 import { comparePasswod, hashPassword } from "../../utils/hash";
 import { signToken } from "../../utils/jwt";
 import { publicUserSelect } from "../../utils/userSelect";
@@ -7,6 +9,7 @@ type registerPayloadType = {
   name: string;
   email: string;
   password: string;
+  role?: RoleName;
 };
 
 type loginPayloadType = {
@@ -23,11 +26,18 @@ export const registerUser = async (data: registerPayloadType) => {
   }
 
   const hashedPassword = await hashPassword(data.password);
+  const role = normalizeRole(data.role ?? ROLES.BUYER);
+
+  if (role !== ROLES.BUYER && role !== ROLES.SELLER) {
+    throw new Error("Registration only supports buyer or seller accounts");
+  }
+
   const user = await prisma.user.create({
     data: {
       name: data.name,
       email: data.email,
       password: hashedPassword,
+      role: role as Role,
     },
     select: publicUserSelect,
   });

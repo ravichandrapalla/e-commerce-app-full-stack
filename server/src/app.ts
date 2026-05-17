@@ -1,6 +1,7 @@
 // app config only
 import express from "express";
 import cors from "cors";
+import { PRODUCT_IMAGES_ROOT } from "./config/productImages";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
@@ -9,6 +10,7 @@ import productRoutes from "./features/product/product.routes";
 import cartRoutes from "./features/cart/cart.routes";
 import orderRoutes from "./features/order/order.routes";
 import adminRoutes from "./features/admin/admin.route";
+import sellerRoutes from "./features/seller/seller.route";
 import categoryRoutes from "./features/category/category.routes";
 import paymentRoutes from "./features/payment/payment.routes";
 import { errorHandler } from "./middlewares/error.middleware";
@@ -28,6 +30,11 @@ app.use(limiter);
 
 app.use(morgan("dev"));
 
+app.use(
+  "/product-images",
+  express.static(PRODUCT_IMAGES_ROOT, { maxAge: "7d", fallthrough: false }),
+);
+
 app.use("/api/v1/payments", paymentRoutes);
 
 app.use(express.json());
@@ -39,6 +46,7 @@ app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/seller", sellerRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 
 app.use(errorHandler);

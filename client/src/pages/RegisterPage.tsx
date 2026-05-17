@@ -14,8 +14,12 @@ import { copy } from "../constants/copy";
 export default function RegisterPage() {
   const formMethods = useForm({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      accountType: "buyer" as const,
+    },
   });
-  const { register, handleSubmit } = formMethods;
+  const { register, handleSubmit, watch } = formMethods;
+  const accountType = watch("accountType");
 
   const registrationMutation = useRegister();
   const navigate = useNavigate();
@@ -57,6 +61,17 @@ export default function RegisterPage() {
           </label>
           <Input id="email" type="email" autoComplete="email" {...register("email")} />
         </div>
+        <fieldset className="space-y-3">
+          <legend className="text-sm font-medium text-foreground">Account type</legend>
+          <label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 has-[:checked]:border-slate-950 has-[:checked]:bg-slate-50">
+            <input type="radio" value="buyer" className="mt-1" {...register("accountType")} />
+            <span className="text-sm font-medium">{labels.buyerLabel}</span>
+          </label>
+          <label className="flex cursor-pointer items-start gap-3 rounded-md border p-3 has-[:checked]:border-emerald-700 has-[:checked]:bg-emerald-50">
+            <input type="radio" value="seller" className="mt-1" {...register("accountType")} />
+            <span className="text-sm font-medium">{labels.sellerLabel}</span>
+          </label>
+        </fieldset>
         <div className="space-y-2">
           <label htmlFor="password" className="text-sm font-medium text-foreground">
             Password
@@ -68,6 +83,11 @@ export default function RegisterPage() {
             {...register("password")}
           />
         </div>
+        {accountType === "seller" && (
+          <p className="text-xs text-slate-500">
+            Seller accounts manage products and orders in the seller hub — not the shopping cart.
+          </p>
+        )}
         <Button type="submit" className="w-full" disabled={registrationMutation.isPending}>
           {registrationMutation.isPending ? "Creating account…" : labels.submit}
         </Button>

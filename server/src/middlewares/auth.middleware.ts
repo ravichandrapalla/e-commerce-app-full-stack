@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyToken } from "../utils/jwt";
 import { prisma } from "../config/db";
+import { normalizeRole } from "../constants/roles";
 
 export interface AuthRequest extends Request {
   user?: {
@@ -29,7 +30,7 @@ export const protect = async (
     }
     req.user = {
       id: user.id,
-      role: user.role,
+      role: normalizeRole(user.role),
     };
     next();
   } catch (error) {

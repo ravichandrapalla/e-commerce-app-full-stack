@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useCart, useRemoveCartItem, useSetCartQuantity } from "../hooks/useAddToCart";
 import type { RootState } from "../store/store";
-import { PRODUCT_IMAGE_FALLBACK } from "../constants/images";
+import { resolveProductImageUrl } from "../lib/productImage";
 import { copy } from "../constants/copy";
 import PageContainer from "../components/ui/PageContainer";
 import { PageHeader, BodyText } from "../components/ui/typography";
@@ -70,7 +70,7 @@ export default function CartPage() {
           {items.map((item) => (
             <div key={item.id} className="grid gap-4 p-4 sm:grid-cols-[96px_1fr_auto]">
               <img
-                src={item.product.imageUrl || PRODUCT_IMAGE_FALLBACK}
+                src={resolveProductImageUrl(item.product.imageUrl)}
                 alt={item.product.title}
                 className="h-24 w-24 rounded-md object-cover"
               />

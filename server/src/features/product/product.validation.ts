@@ -14,6 +14,7 @@ export const querySchema = z.object({
   minPrice: z.string().optional(),
   maxPrice: z.string().optional(),
   categoryId: z.string().optional(),
+  sellerId: z.string().optional(),
   inStock: z.string().optional(),
   sort: z.string().optional(),
   page: z.string().optional(),

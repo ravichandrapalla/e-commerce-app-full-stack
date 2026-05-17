@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { protect } from "../../middlewares/auth.middleware";
+import { restrictTo } from "../../middlewares/role.middleware";
+import { ROLES } from "../../constants/roles";
 import {
   getCart,
   addItem,
@@ -10,7 +12,7 @@ import {
 
 const router = Router();
 
-router.use(protect);
+router.use(protect, restrictTo(ROLES.BUYER));
 
 router.get("/", getCart);
 router.post("/add", addItem);

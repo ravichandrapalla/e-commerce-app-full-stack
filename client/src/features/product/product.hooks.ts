@@ -15,10 +15,18 @@ export const useProducts = (params: ProductSearchParams) =>
     },
   });
 
-export const useCreateProduct = () =>
-  useMutation({
+export const useCreateProduct = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
     mutationFn: createProductApi,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["products"] });
+      qc.invalidateQueries({ queryKey: ["seller-products"] });
+      qc.invalidateQueries({ queryKey: ["seller-stats"] });
+    },
   });
+};
 
 export const useUpdateProduct = () => {
   const qc = useQueryClient();
@@ -36,6 +44,8 @@ export const useUpdateProduct = () => {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["products"] });
+      qc.invalidateQueries({ queryKey: ["seller-products"] });
+      qc.invalidateQueries({ queryKey: ["seller-stats"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
   });

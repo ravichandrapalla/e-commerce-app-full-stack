@@ -10,6 +10,7 @@ export const copy = {
     orders: "Orders",
     cart: "Cart",
     admin: "Admin",
+    seller: "Seller hub",
     login: "Sign in",
     logout: "Sign out",
     profile: "Profile",
@@ -88,8 +89,10 @@ export const copy = {
     },
     register: {
       title: "Create account",
-      description: "Register to save your cart and track your orders.",
+      description: "Join as a buyer to shop, or as a seller to list products on the marketplace.",
       submit: "Create account",
+      buyerLabel: "Buyer — shop and checkout",
+      sellerLabel: "Seller — list and fulfill products",
     },
   },
   profile: {

@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { ReactElement } from "react";
 import type { RootState } from "../store/store";
+import { isAdmin } from "../types/auth";
 
 export default function AdminRoute({ children }: { children: ReactElement }) {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -10,7 +11,7 @@ export default function AdminRoute({ children }: { children: ReactElement }) {
     return <Navigate to="/login" />;
   }
 
-  if (user.role !== "ADMIN") {
+  if (!isAdmin(user.role)) {
     return <Navigate to="/" />;
   }
 

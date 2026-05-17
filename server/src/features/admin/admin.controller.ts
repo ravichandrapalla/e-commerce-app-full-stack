@@ -8,7 +8,8 @@ import {
 
 export const getDashboardStats = async (_req: Request, res: Response) => {
   const [
-    users,
+    buyers,
+    sellers,
     products,
     lowStockProducts,
     outOfStockProducts,
@@ -16,7 +17,8 @@ export const getDashboardStats = async (_req: Request, res: Response) => {
     pendingFulfillment,
     revenue,
   ] = await Promise.all([
-    prisma.user.count(),
+    prisma.user.count({ where: { role: "BUYER" } }),
+    prisma.user.count({ where: { role: "SELLER" } }),
     prisma.product.count(),
     prisma.product.count({
       where: {
@@ -49,7 +51,8 @@ export const getDashboardStats = async (_req: Request, res: Response) => {
   ]);
 
   res.json({
-    users,
+    buyers,
+    sellers,
     products,
     lowStockProducts,
     outOfStockProducts,

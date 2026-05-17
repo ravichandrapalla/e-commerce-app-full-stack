@@ -3,7 +3,7 @@ import PageContainer from "../components/ui/PageContainer";
 import AddToCart from "../components/ui/AddToCart";
 import { useProduct } from "../hooks/useProduct";
 import { copy } from "../constants/copy";
-import { PRODUCT_IMAGE_FALLBACK } from "../constants/images";
+import { resolveProductImageUrl } from "../lib/productImage";
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("en-IN", {
@@ -57,7 +57,7 @@ export default function ProductDetailsPage() {
       <div className="animate-in fade-in slide-in-from-bottom-2 grid gap-6 py-2 duration-300 lg:grid-cols-[minmax(0,1.05fr)_minmax(340px,0.95fr)] lg:gap-10">
         <section className="overflow-hidden rounded-md border bg-white shadow-sm">
           <img
-            src={data.imageUrl || PRODUCT_IMAGE_FALLBACK}
+            src={resolveProductImageUrl(data.imageUrl)}
             alt={data.title}
             className="aspect-square w-full object-cover"
           />
@@ -75,6 +75,11 @@ export default function ProductDetailsPage() {
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
               {data.category?.name || "Product"}
             </span>
+            {data.seller?.name && (
+              <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
+                Sold by {data.seller.name}
+              </span>
+            )}
             <span
               className={`rounded-full px-3 py-1 text-xs font-semibold ${
                 data.stock === 0

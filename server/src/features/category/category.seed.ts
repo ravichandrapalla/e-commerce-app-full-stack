@@ -1,22 +1,8 @@
 import { prisma } from "../../config/db";
+import { CATALOG_CATEGORY_NAMES } from "../../constants/catalogCategories";
 
-export const DEFAULT_CATEGORIES = [
-  "Electronics",
-  "Fashion & Apparel",
-  "Home & Kitchen",
-  "Beauty & Personal Care",
-  "Sports & Outdoors",
-  "Books & Stationery",
-  "Toys & Games",
-  "Grocery & Gourmet",
-  "Health & Wellness",
-  "Automotive",
-  "Jewelry & Accessories",
-  "Baby & Kids",
-  "Pet Supplies",
-  "Office Supplies",
-  "Furniture",
-] as const;
+/** Categories aligned with ECOMMERCE_PRODUCT_IMAGES dataset folders */
+export const DEFAULT_CATEGORIES = CATALOG_CATEGORY_NAMES;
 
 export const ensureDefaultCategories = async () => {
   await Promise.all(

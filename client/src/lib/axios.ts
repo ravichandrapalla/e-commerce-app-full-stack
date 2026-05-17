@@ -14,7 +14,11 @@ api.interceptors.response.use(
   },
 
   (error) => {
-    const message = error.response?.data?.message || "Something went wrong";
+    const message =
+      error.response?.data?.message ??
+      (error.code === "ERR_NETWORK"
+        ? "Cannot reach the API server. Start it with: cd server && npm run dev"
+        : "Something went wrong");
 
     toast.error(message);
 

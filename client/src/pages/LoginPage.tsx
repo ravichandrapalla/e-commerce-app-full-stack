@@ -9,6 +9,7 @@ import { Button } from "../components/ui/button";
 import { useLocation, useNavigate } from "react-router-dom";
 import AuthFormCard, { AuthFooterLink } from "../components/ui/AuthFormCard";
 import { copy } from "../constants/copy";
+import { toAuthUser } from "../types/auth";
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm<LoginFormValues>({
@@ -25,7 +26,7 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormValues) => {
     const res = await loginMutation.mutateAsync(data);
-    dispatch(setUser(res.data.user));
+    dispatch(setUser(toAuthUser(res.data.user)));
     navigate(redirectTo, { replace: true });
   };
 
