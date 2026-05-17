@@ -1,0 +1,153 @@
+import { STORE_NAME } from "./brand";
+
+export const copy = {
+  brand: {
+    name: STORE_NAME,
+  },
+  nav: {
+    home: "Home",
+    products: "Products",
+    orders: "Orders",
+    cart: "Cart",
+    admin: "Admin",
+    login: "Sign in",
+    logout: "Sign out",
+    profile: "Profile",
+  },
+  home: {
+    hero: {
+      slides: [
+        {
+          id: "seasonal",
+          eyebrow: "Seasonal sale",
+          title: "Save up to 40% on selected items",
+          description:
+            "Limited-time offers across fashion, home, and everyday essentials.",
+          cta: "Shop sale",
+          href: "/#shop",
+          image:
+            "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80",
+          accent: "from-orange-500/90 via-rose-500/80 to-fuchsia-600/85",
+        },
+        {
+          id: "electronics",
+          eyebrow: "New arrivals",
+          title: "Electronics for work and home",
+          description:
+            "Laptops, audio, accessories, and more from trusted brands.",
+          cta: "Shop electronics",
+          href: "/#shop",
+          image:
+            "https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1600&q=80",
+          accent: "from-slate-900/90 via-indigo-900/80 to-violet-700/85",
+        },
+        {
+          id: "home",
+          eyebrow: "Home & living",
+          title: "Furnish and refresh your space",
+          description:
+            "Furniture, kitchenware, and decor for every room.",
+          cta: "Shop home",
+          href: "/#shop",
+          image:
+            "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1600&q=80",
+          accent: "from-emerald-800/90 via-teal-800/80 to-cyan-700/85",
+        },
+      ],
+    },
+    categories: {
+      eyebrow: "Categories",
+      title: "Shop by category",
+      clear: "Clear filter",
+    },
+    catalog: {
+      eyebrow: "Products",
+      title: "All products",
+      description: "Search and filter to find what you need.",
+      compactTitle: "Product catalog",
+    },
+  },
+  catalog: {
+    searchPlaceholder: "Search by name or keyword",
+    filters: "Filters",
+    clear: "Clear filters",
+    inStockOnly: "In stock only",
+    noResultsTitle: "No products found",
+    noResultsDescription: "Try different keywords or adjust your filters.",
+    loading: "Loading products…",
+    results: (count: number) =>
+      count === 1 ? "1 product" : `${count} products`,
+  },
+  auth: {
+    signIn: {
+      title: "Sign in",
+      description: "Access your cart, orders, and account settings.",
+      submit: "Sign in",
+      noAccount: "Don't have an account?",
+      registerLink: "Create account",
+    },
+    register: {
+      title: "Create account",
+      description: "Register to save your cart and track your orders.",
+      submit: "Create account",
+    },
+  },
+  profile: {
+    eyebrow: "Account",
+    title: "Profile",
+    description: "Update your name and profile photo.",
+    changePhoto: "Change photo",
+    photoHint: "JPG, PNG, or WebP. Maximum 5 MB.",
+    displayName: "Display name",
+    email: "Email",
+    save: "Save changes",
+    saving: "Saving…",
+    noChanges: "No changes to save",
+    success: "Profile updated",
+    error: "Could not update profile",
+  },
+  cart: {
+    title: "Shopping cart",
+    emptyTitle: "Your cart is empty",
+    emptyDescription: "Browse products and add items to checkout.",
+    continueShopping: "Continue shopping",
+    summary: "Order summary",
+    checkout: "Proceed to checkout",
+    loading: "Loading cart…",
+    signInToCheckout: "Sign in to checkout",
+  },
+  checkoutPage: {
+    title: "Checkout",
+    description: "Enter your delivery address, then continue to payment.",
+    deliveryTitle: "Delivery address",
+    orderSummary: "Order summary",
+    placeOrder: "Continue to payment",
+    processing: "Preparing checkout…",
+    backToCart: "Back to cart",
+    emptyCart: "Your cart is empty. Add items before checkout.",
+  },
+  orders: {
+    title: "Orders",
+    emptyTitle: "No orders yet",
+    emptyDescription: "Your order history will appear here after checkout.",
+    continueShopping: "Browse products",
+    loading: "Loading orders…",
+  },
+  product: {
+    notFoundTitle: "Product not found",
+    notFoundDescription: "This item may have been removed or is unavailable.",
+    backToShop: "Back to shop",
+    secureCheckout: "Secure checkout",
+    secureCheckoutDescription: "Payments are processed securely at checkout.",
+    liveInventory: "Stock availability",
+    liveInventoryDescription: "Quantity is verified before you pay.",
+    orderTracking: "Order updates",
+    orderTrackingDescription: "Track status from payment through delivery.",
+  },
+  checkout: {
+    successEyebrow: "Order confirmed",
+    successTitle: "Thank you for your order",
+    cancelEyebrow: "Checkout cancelled",
+    cancelTitle: "Your cart is still saved",
+  },
+} as const;

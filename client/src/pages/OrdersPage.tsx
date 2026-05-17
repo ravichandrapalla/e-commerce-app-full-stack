@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { useOrders } from "../hooks/useCheckout";
 import type { OrderStatus } from "../types/ecommerce";
+import PageContainer from "../components/ui/PageContainer";
+import { PageHeader, BodyText } from "../components/ui/typography";
+import { copy } from "../constants/copy";
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("en-IN", {
@@ -34,43 +37,50 @@ export default function OrdersPage() {
   const { data = [], isLoading } = useOrders();
 
   if (isLoading) {
-    return <div className="mx-auto max-w-7xl px-4 py-10">Loading orders...</div>;
+    return (
+      <PageContainer className="py-10">
+        <BodyText>{copy.orders.loading}</BodyText>
+      </PageContainer>
+    );
   }
 
   if (data.length === 0) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-16 text-center">
-        <h1 className="text-2xl font-semibold">No orders yet</h1>
-        <p className="mt-2 text-sm text-slate-600">
-          Completed checkouts and demo orders will appear here.
-        </p>
+      <PageContainer className="py-16 text-center">
+        <PageHeader
+          title={copy.orders.emptyTitle}
+          description={copy.orders.emptyDescription}
+          className="mx-auto max-w-md justify-center text-center [&_p]:mx-auto"
+        />
         <Link
-          to="/"
-          className="mt-6 inline-flex rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white"
+          to="/products"
+          className="mt-8 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
         >
-          Start shopping
+          {copy.orders.continueShopping}
         </Link>
-      </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      <h1 className="text-2xl font-semibold">Orders</h1>
-      <div className="mt-5 space-y-4">
+    <PageContainer className="py-8 sm:py-10">
+      <PageHeader title={copy.orders.title} className="mb-6" />
+      <div className="space-y-4">
         {data.map((order) => {
           const activeStep = Math.max(statusSteps.indexOf(order.status), 0);
 
           return (
-            <article key={order.id} className="rounded-md border bg-white p-5 shadow-sm">
+            <article key={order.id} className="section-surface">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <h2 className="font-semibold">Order #{order.id.slice(0, 8)}</h2>
-                  <p className="mt-1 text-sm text-slate-600">
+                  <h2 className="font-semibold text-foreground">
+                    Order #{order.id.slice(0, 8)}
+                  </h2>
+                  <BodyText className="mt-1">
                     {new Date(order.createdAt).toLocaleString()}
-                  </p>
+                  </BodyText>
                 </div>
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700">
+                <span className="rounded-full bg-muted px-3 py-1 text-sm font-medium text-foreground">
                   {statusLabel[order.status]}
                 </span>
               </div>
@@ -80,10 +90,10 @@ export default function OrdersPage() {
                   <div key={step} className="min-w-0">
                     <div
                       className={`h-2 rounded-full ${
-                        index <= activeStep ? "bg-slate-950" : "bg-slate-200"
+                        index <= activeStep ? "bg-primary" : "bg-muted"
                       }`}
                     />
-                    <p className="mt-2 truncate text-xs text-slate-500">
+                    <p className="mt-2 truncate text-xs text-muted-foreground">
                       {statusLabel[step]}
                     </p>
                   </div>
@@ -93,24 +103,23 @@ export default function OrdersPage() {
               <div className="mt-5 divide-y rounded-md border">
                 {order.items.map((item) => (
                   <div key={item.id} className="flex justify-between gap-3 p-3 text-sm">
-                    <span>
-                      {item.product.title} x {item.quantity}
+                    <span className="text-foreground">
+                      {item.product.title} × {item.quantity}
                     </span>
-                    <span className="font-medium">
+                    <span className="font-medium text-foreground">
                       {formatCurrency(item.price * item.quantity)}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-4 flex justify-end text-base font-semibold">
+              <div className="mt-4 flex justify-end text-base font-semibold text-foreground">
                 Total: {formatCurrency(order.totalAmount)}
               </div>
             </article>
           );
         })}
       </div>
-    </div>
+    </PageContainer>
   );
 }
-

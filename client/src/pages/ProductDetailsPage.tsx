@@ -2,6 +2,8 @@ import { Link, useParams } from "react-router-dom";
 import PageContainer from "../components/ui/PageContainer";
 import AddToCart from "../components/ui/AddToCart";
 import { useProduct } from "../hooks/useProduct";
+import { copy } from "../constants/copy";
+import { PRODUCT_IMAGE_FALLBACK } from "../constants/images";
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("en-IN", {
@@ -55,7 +57,7 @@ export default function ProductDetailsPage() {
       <div className="animate-in fade-in slide-in-from-bottom-2 grid gap-6 py-2 duration-300 lg:grid-cols-[minmax(0,1.05fr)_minmax(340px,0.95fr)] lg:gap-10">
         <section className="overflow-hidden rounded-md border bg-white shadow-sm">
           <img
-            src={data.imageUrl || "https://placehold.co/900x900?text=Product"}
+            src={data.imageUrl || PRODUCT_IMAGE_FALLBACK}
             alt={data.title}
             className="aspect-square w-full object-cover"
           />
@@ -108,16 +110,16 @@ export default function ProductDetailsPage() {
 
           <div className="mt-5 grid gap-3 text-sm text-slate-600 sm:grid-cols-3">
             <div className="rounded-md bg-slate-50 p-3">
-              <p className="font-semibold text-slate-900">Secure checkout</p>
-              <p className="mt-1">Stripe demo or built-in sandbox flow.</p>
+              <p className="font-semibold text-slate-900">{copy.product.secureCheckout}</p>
+              <p className="mt-1">{copy.product.secureCheckoutDescription}</p>
             </div>
             <div className="rounded-md bg-slate-50 p-3">
-              <p className="font-semibold text-slate-900">Live inventory</p>
-              <p className="mt-1">Stock is checked before payment.</p>
+              <p className="font-semibold text-slate-900">{copy.product.liveInventory}</p>
+              <p className="mt-1">{copy.product.liveInventoryDescription}</p>
             </div>
             <div className="rounded-md bg-slate-50 p-3">
-              <p className="font-semibold text-slate-900">Order tracking</p>
-              <p className="mt-1">Follow payment and shipping statuses.</p>
+              <p className="font-semibold text-slate-900">{copy.product.orderTracking}</p>
+              <p className="mt-1">{copy.product.orderTrackingDescription}</p>
             </div>
           </div>
         </section>

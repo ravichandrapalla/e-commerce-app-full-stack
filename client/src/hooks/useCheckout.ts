@@ -4,23 +4,20 @@ import {
   completeDemoCheckoutApi,
   getOrdersApi,
 } from "../features/order/order.service";
+import type { ShippingAddressFormValues } from "../features/order/checkout.schema";
 
 export const useCheckout = () => {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
-      const res = await checkoutApi();
+    mutationFn: async (shipping: ShippingAddressFormValues) => {
+      const res = await checkoutApi(shipping);
       return res.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["cart"] });
       qc.invalidateQueries({ queryKey: ["orders"] });
       qc.invalidateQueries({ queryKey: ["products"] });
-
-      if (data.checkoutUrl) {
-        window.location.assign(data.checkoutUrl);
-      }
     },
   });
 };

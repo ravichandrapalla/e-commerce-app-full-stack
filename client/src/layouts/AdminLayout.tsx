@@ -1,6 +1,7 @@
 import { Outlet, NavLink } from "react-router-dom";
 import { adminLinks } from "../constants/adminLinks";
 import { cn } from "../lib/utils";
+import { STORE_NAME } from "../constants/brand";
 
 export default function AdminLayout() {
   return (
@@ -8,7 +9,7 @@ export default function AdminLayout() {
       <aside className="border-b bg-white p-4 shadow-sm lg:border-b-0 lg:border-r">
         <div className="mb-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            RaviCommerce
+            {STORE_NAME}
           </p>
           <h2 className="mt-1 text-2xl font-semibold">Admin</h2>
         </div>

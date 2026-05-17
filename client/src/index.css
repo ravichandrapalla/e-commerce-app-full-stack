@@ -17,7 +17,9 @@ body,
 }
 
 body {
-  @apply bg-white text-slate-900 antialiased;
+  @apply bg-background text-foreground antialiased;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  text-rendering: optimizeLegibility;
 }
 
 /* :root {
@@ -256,5 +258,21 @@ code {
   }
   html {
     @apply font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-balance;
+  }
+}
+
+@layer components {
+  .page-stack {
+    @apply flex flex-col gap-10 sm:gap-12;
+  }
+
+  .section-surface {
+    @apply rounded-xl border bg-card p-5 shadow-sm sm:p-6;
   }
 }

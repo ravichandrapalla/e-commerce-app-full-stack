@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import type { Product } from "../../types/ecommerce";
+import { PRODUCT_IMAGE_FALLBACK } from "../../constants/images";
+import { typography } from "../../lib/typography";
 import AddToCart from "./AddToCart";
+import { cn } from "../../lib/utils";
 
 type ProductCardProps = {
   product: Product;
@@ -40,7 +43,7 @@ export default function ProductCard({
       >
         <div className="overflow-hidden bg-slate-100">
           <img
-            src={product.imageUrl || "https://placehold.co/640x520?text=Product"}
+            src={product.imageUrl || PRODUCT_IMAGE_FALLBACK}
             alt={product.title}
             className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-105"
             loading="lazy"
@@ -49,10 +52,10 @@ export default function ProductCard({
         <div className="p-4 pb-2">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                {product.category?.name || "Product"}
+              <p className={cn(typography.eyebrow, "normal-case tracking-normal")}>
+                {product.category?.name || "Uncategorized"}
               </p>
-              <h2 className="mt-1 line-clamp-2 min-h-11 text-base font-semibold text-slate-950">
+              <h2 className="mt-1.5 line-clamp-2 text-base font-semibold tracking-tight text-foreground">
                 {product.title}
               </h2>
             </div>

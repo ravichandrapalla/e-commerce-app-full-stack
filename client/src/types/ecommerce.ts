@@ -81,6 +81,13 @@ export type Order = {
   paidAt?: string | null;
   createdAt: string;
   updatedAt?: string;
+  shippingName?: string | null;
+  shippingLine1?: string | null;
+  shippingLine2?: string | null;
+  shippingCity?: string | null;
+  shippingState?: string | null;
+  shippingPostalCode?: string | null;
+  shippingCountry?: string | null;
   items: OrderItem[];
 };
 

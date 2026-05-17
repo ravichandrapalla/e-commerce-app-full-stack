@@ -18,6 +18,7 @@ import OrdersPage from "../pages/OrdersPage";
 import CheckoutSuccessPage from "../pages/CheckoutSuccessPage";
 import CheckoutCancelPage from "../pages/CheckoutCancelPage";
 import DemoCheckoutPage from "../pages/DemoCheckoutPage";
+import CheckoutPage from "../pages/CheckoutPage";
 
 export const router = createBrowserRouter([
   {
@@ -82,6 +83,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <CartPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/checkout",
+        element: (
+          <ProtectedRoute>
+            <CheckoutPage />
           </ProtectedRoute>
         ),
       },

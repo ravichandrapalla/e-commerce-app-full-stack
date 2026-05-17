@@ -6,6 +6,11 @@ import {
   sendOrderStatusEmail,
 } from "../email/email.service";
 
+import type { z } from "zod";
+import type { shippingAddressSchema } from "./order.validation";
+
+type ShippingAddress = z.infer<typeof shippingAddressSchema>;
+
 const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 
 const orderInclude = {
@@ -52,7 +57,10 @@ const getCartForCheckout = async (userId: string) => {
   return cart;
 };
 
-export const startCheckout = async (userId: string) => {
+export const startCheckout = async (
+  userId: string,
+  shipping: ShippingAddress,
+) => {
   const cart = await getCartForCheckout(userId);
   const totalAmount = cart.items.reduce((total, item) => {
     return total + item.product.price * item.quantity;
@@ -65,7 +73,13 @@ export const startCheckout = async (userId: string) => {
       status: OrderStatus.PAYMENT_PENDING,
       paymentProvider: stripe ? "stripe" : "demo",
       customerEmail: cart.user.email,
-      shippingName: cart.user.name,
+      shippingName: shipping.name,
+      shippingLine1: shipping.line1,
+      shippingLine2: shipping.line2 || null,
+      shippingCity: shipping.city,
+      shippingState: shipping.state,
+      shippingPostalCode: shipping.postalCode,
+      shippingCountry: shipping.country,
       items: {
         create: cart.items.map((item) => ({
           productId: item.productId,
@@ -96,7 +110,7 @@ export const startCheckout = async (userId: string) => {
       userId,
     },
     shipping_address_collection: {
-      allowed_countries: ["IN", "US"],
+      allowed_countries: [shipping.country as "IN" | "US"],
     },
     line_items: cart.items.map((item) => {
       const productData: {
@@ -244,6 +258,19 @@ export const getOrders = async (userId: string) => {
       createdAt: "desc",
     },
   });
+};
+
+export const getOrderById = async (userId: string, orderId: string) => {
+  const order = await prisma.order.findFirst({
+    where: { id: orderId, userId },
+    include: orderInclude,
+  });
+
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
+  return order;
 };
 
 const adminOrderInclude = {

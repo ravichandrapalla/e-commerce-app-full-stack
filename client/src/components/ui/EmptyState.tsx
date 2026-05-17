@@ -1,14 +1,18 @@
+import { BodyText } from "./typography";
+import { typography } from "../../lib/typography";
+import { cn } from "../../lib/utils";
+
 type Props = {
   title: string;
   description?: string;
+  className?: string;
 };
 
-export default function EmptyState({ title, description }: Props) {
+export default function EmptyState({ title, description, className }: Props) {
   return (
-    <div className="text-center py-20">
-      <h2 className="text-2xl font-semibold">{title}</h2>
-
-      {description && <p className="text-slate-500 mt-2">{description}</p>}
+    <div className={cn("py-16 text-center", className)}>
+      <h2 className={typography.sectionTitle}>{title}</h2>
+      {description && <BodyText className="mt-2 mx-auto">{description}</BodyText>}
     </div>
   );
 }

@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useCart, useRemoveCartItem, useSetCartQuantity } from "../hooks/useAddToCart";
-import { useCheckout } from "../hooks/useCheckout";
+import type { RootState } from "../store/store";
+import { PRODUCT_IMAGE_FALLBACK } from "../constants/images";
+import { copy } from "../constants/copy";
+import PageContainer from "../components/ui/PageContainer";
+import { PageHeader, BodyText } from "../components/ui/typography";
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("en-IN", {
@@ -9,10 +14,10 @@ const formatCurrency = (amount: number) =>
   }).format(amount);
 
 export default function CartPage() {
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const { data, isLoading } = useCart();
   const setQuantity = useSetCartQuantity();
   const removeItem = useRemoveCartItem();
-  const checkout = useCheckout();
 
   const items = data?.items || [];
   const subtotal = items.reduce(
@@ -22,22 +27,26 @@ export default function CartPage() {
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
 
   if (isLoading) {
-    return <div className="mx-auto max-w-7xl px-4 py-10">Loading cart...</div>;
+    return (
+      <PageContainer className="py-10">
+        <BodyText>{copy.cart.loading}</BodyText>
+      </PageContainer>
+    );
   }
 
   if (items.length === 0) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="mx-auto max-w-md text-center">
-          <h1 className="text-2xl font-semibold">Your cart is empty</h1>
-          <p className="mt-2 text-sm text-slate-600">
-            Add a few products and your checkout summary will appear here.
-          </p>
+          <PageHeader
+            title={copy.cart.emptyTitle}
+            description={copy.cart.emptyDescription}
+          />
           <Link
-            to="/"
-            className="mt-6 inline-flex rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
+            to="/products"
+            className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
           >
-            Continue shopping
+            {copy.cart.continueShopping}
           </Link>
         </div>
       </div>
@@ -49,7 +58,7 @@ export default function CartPage() {
       <section>
         <div className="mb-5 flex items-end justify-between">
           <div>
-            <h1 className="text-2xl font-semibold">Shopping cart</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">{copy.cart.title}</h1>
             <p className="text-sm text-slate-600">{itemCount} item(s)</p>
           </div>
           <Link to="/" className="text-sm font-medium text-slate-700 hover:text-slate-950">
@@ -61,7 +70,7 @@ export default function CartPage() {
           {items.map((item) => (
             <div key={item.id} className="grid gap-4 p-4 sm:grid-cols-[96px_1fr_auto]">
               <img
-                src={item.product.imageUrl || "https://placehold.co/240x240?text=Product"}
+                src={item.product.imageUrl || PRODUCT_IMAGE_FALLBACK}
                 alt={item.product.title}
                 className="h-24 w-24 rounded-md object-cover"
               />
@@ -120,7 +129,7 @@ export default function CartPage() {
       </section>
 
       <aside className="h-fit rounded-md border bg-white p-5">
-        <h2 className="text-lg font-semibold">Order summary</h2>
+        <h2 className="text-lg font-semibold tracking-tight">{copy.cart.summary}</h2>
         <div className="mt-5 space-y-3 text-sm">
           <div className="flex justify-between">
             <span className="text-slate-600">Subtotal</span>
@@ -135,14 +144,13 @@ export default function CartPage() {
           <span>Total</span>
           <span>{formatCurrency(subtotal)}</span>
         </div>
-        <button
-          type="button"
-          disabled={checkout.isPending}
-          onClick={() => checkout.mutate()}
-          className="mt-5 w-full rounded-md bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-60"
+        <Link
+          to={isAuthenticated ? "/checkout" : "/login"}
+          state={isAuthenticated ? undefined : { from: "/checkout" }}
+          className="mt-5 flex h-11 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
         >
-          {checkout.isPending ? "Starting checkout..." : "Checkout securely"}
-        </button>
+          {isAuthenticated ? copy.cart.checkout : copy.cart.signInToCheckout}
+        </Link>
       </aside>
     </div>
   );

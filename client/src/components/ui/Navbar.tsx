@@ -15,6 +15,8 @@ import { useCart } from "../../hooks/useAddToCart";
 import { cn } from "../../lib/utils";
 import UserMenu from "./UserMenu";
 import UserAvatar from "./UserAvatar";
+import { STORE_NAME } from "../../constants/brand";
+import { copy } from "../../constants/copy";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
@@ -52,21 +54,21 @@ export default function Navbar() {
           <span className="grid size-9 shrink-0 place-items-center rounded-md bg-slate-950 text-sm font-bold text-white">
             RC
           </span>
-          <span className="truncate text-lg">RaviCommerce</span>
+          <span className="truncate text-lg font-semibold tracking-tight">{STORE_NAME}</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
           <NavLink to="/" end className={navLinkClass}>
-            Home
+            {copy.nav.home}
           </NavLink>
           <NavLink to="/products" className={navLinkClass}>
-            Products
+            {copy.nav.products}
           </NavLink>
 
           {user && (
             <>
               <NavLink to="/orders" className={navLinkClass}>
-                Orders
+                {copy.nav.orders}
               </NavLink>
               <NavLink
                 to="/cart"
@@ -76,7 +78,7 @@ export default function Navbar() {
                 aria-label={`Cart with ${cartQuantity} item(s)`}
               >
                 <HugeiconsIcon icon={ShoppingCart01Icon} size={17} />
-                Cart
+                {copy.nav.cart}
                 {cartQuantity > 0 && (
                   <span className="absolute -right-2 -top-2 grid min-w-5 place-items-center rounded-full bg-emerald-600 px-1 text-[0.68rem] font-bold leading-5 text-white ring-2 ring-white">
                     {cartQuantity}
@@ -88,7 +90,7 @@ export default function Navbar() {
 
           {user?.role === "ADMIN" && (
             <NavLink to="/admin" className={navLinkClass}>
-              Admin
+              {copy.nav.admin}
             </NavLink>
           )}
         </nav>
@@ -101,7 +103,7 @@ export default function Navbar() {
               className="rounded-md bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
               to="/login"
             >
-              Login
+              {copy.nav.login}
             </Link>
           )}
         </div>
@@ -149,12 +151,12 @@ export default function Navbar() {
             </NavLink>
             {user && (
               <NavLink to="/orders" onClick={closeMobile} className={navLinkClass}>
-                Orders
+                {copy.nav.orders}
               </NavLink>
             )}
             {user?.role === "ADMIN" && (
               <NavLink to="/admin" onClick={closeMobile} className={navLinkClass}>
-                Admin
+                {copy.nav.admin}
               </NavLink>
             )}
             {user ? (
@@ -173,14 +175,14 @@ export default function Navbar() {
                   </div>
                 </div>
                 <NavLink to="/profile" onClick={closeMobile} className={navLinkClass}>
-                  Profile
+                  {copy.nav.profile}
                 </NavLink>
                 <button
                   type="button"
                   onClick={handleLogout}
                   className="rounded-md px-3 py-2 text-left text-sm font-medium text-red-600 transition hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
                 >
-                  Logout
+                  {copy.nav.logout}
                 </button>
               </>
             ) : (
@@ -189,7 +191,7 @@ export default function Navbar() {
                 className="rounded-md bg-slate-950 px-3 py-2 text-sm font-semibold text-white"
                 to="/login"
               >
-                Login
+                {copy.nav.login}
               </Link>
             )}
           </nav>

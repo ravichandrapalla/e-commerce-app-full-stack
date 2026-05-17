@@ -6,11 +6,13 @@ type User = AuthUser | null;
 type AuthState = {
   user: User;
   isAuthenticated: boolean;
+  isAuthReady: boolean;
 };
 
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
+  isAuthReady: false,
 };
 
 const authSlice = createSlice({
@@ -25,8 +27,11 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
     },
+    setAuthReady(state) {
+      state.isAuthReady = true;
+    },
   },
 });
 
-export const { setUser, clearUser } = authSlice.actions;
+export const { setUser, clearUser, setAuthReady } = authSlice.actions;
 export default authSlice.reducer;

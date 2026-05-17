@@ -6,7 +6,9 @@ import { useLogin } from "../features/auth/auth.hooks";
 import { setUser } from "../features/auth/auth.slice";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import AuthFormCard, { AuthFooterLink } from "../components/ui/AuthFormCard";
+import { copy } from "../constants/copy";
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm<LoginFormValues>({
@@ -16,24 +18,51 @@ export default function LoginPage() {
   const loginMutation = useLogin();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const labels = copy.auth.signIn;
+  const redirectTo =
+    (location.state as { from?: string } | null)?.from || "/";
 
   const onSubmit = async (data: LoginFormValues) => {
     const res = await loginMutation.mutateAsync(data);
     dispatch(setUser(res.data.user));
-    navigate("/");
+    navigate(redirectTo, { replace: true });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-3">
-      <Input {...register("email")} placeholder="Email" />
-      <Input {...register("password")} type="password" placeholder="Password" />
-      <Button type="submit">Login</Button>
-      <p>
-        New User?{" "}
-        <Link to="/register" className="underline cursor-pointer">
-          Register here
-        </Link>
-      </p>
-    </form>
+    <AuthFormCard
+      title={labels.title}
+      description={labels.description}
+      footer={
+        <AuthFooterLink
+          label={labels.noAccount}
+          linkText={labels.registerLink}
+          to="/register"
+        />
+      }
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="space-y-2">
+          <label htmlFor="email" className="text-sm font-medium text-foreground">
+            Email
+          </label>
+          <Input id="email" type="email" autoComplete="email" {...register("email")} />
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="password" className="text-sm font-medium text-foreground">
+            Password
+          </label>
+          <Input
+            id="password"
+            type="password"
+            autoComplete="current-password"
+            {...register("password")}
+          />
+        </div>
+        <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
+          {loginMutation.isPending ? "Signing in…" : labels.submit}
+        </Button>
+      </form>
+    </AuthFormCard>
   );
 }

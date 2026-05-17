@@ -6,47 +6,11 @@ import {
   ArrowRight01Icon,
 } from "@hugeicons/core-free-icons";
 
+import { copy } from "../../constants/copy";
 import { cn } from "../../lib/utils";
+import { typography } from "../../lib/typography";
 
-const slides = [
-  {
-    id: "summer",
-    eyebrow: "Limited time",
-    title: "Summer essentials up to 40% off",
-    description:
-      "Refresh your wardrobe and home setup with curated picks from top categories.",
-    cta: "Shop deals",
-    href: "/#shop",
-    image:
-      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80",
-    accent: "from-orange-500/90 via-rose-500/80 to-fuchsia-600/85",
-  },
-  {
-    id: "tech",
-    eyebrow: "New arrivals",
-    title: "Smart gadgets for everyday life",
-    description:
-      "Discover electronics, accessories, and must-have tech with fast delivery.",
-    cta: "Browse electronics",
-    href: "/#shop",
-    image:
-      "https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1600&q=80",
-    accent: "from-slate-900/90 via-indigo-900/80 to-violet-700/85",
-  },
-  {
-    id: "home",
-    eyebrow: "Home & living",
-    title: "Make every room feel complete",
-    description:
-      "Furniture, kitchen, and decor pieces selected for comfort and style.",
-    cta: "Explore home",
-    href: "/#shop",
-    image:
-      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1600&q=80",
-    accent: "from-emerald-800/90 via-teal-800/80 to-cyan-700/85",
-  },
-];
-
+const slides = copy.home.hero.slides;
 const AUTOPLAY_MS = 6000;
 
 export default function HeroCarousel() {
@@ -67,10 +31,10 @@ export default function HeroCarousel() {
   return (
     <section
       aria-roledescription="carousel"
-      aria-label="Featured promotions"
-      className="relative overflow-hidden rounded-2xl border shadow-lg"
+      aria-label="Featured offers"
+      className="relative overflow-hidden rounded-2xl border shadow-md"
     >
-      <div className="relative min-h-[320px] sm:min-h-[380px] lg:min-h-[420px]">
+      <div className="relative min-h-[300px] sm:min-h-[360px] lg:min-h-[400px]">
         {slides.map((item, index) => (
           <div
             key={item.id}
@@ -85,26 +49,26 @@ export default function HeroCarousel() {
               alt=""
               className="absolute inset-0 size-full object-cover"
             />
-            <div
-              className={cn(
-                "absolute inset-0 bg-gradient-to-r",
-                item.accent,
-              )}
-            />
+            <div className={cn("absolute inset-0 bg-gradient-to-r", item.accent)} />
             <div className="relative flex h-full flex-col justify-end p-6 sm:p-10 lg:p-12">
-              <p className="animate-in fade-in slide-in-from-bottom-2 text-xs font-bold uppercase tracking-[0.2em] text-white/85 duration-500">
+              <p
+                className={cn(
+                  typography.eyebrow,
+                  "animate-in fade-in slide-in-from-bottom-2 text-white/85 duration-500",
+                )}
+              >
                 {item.eyebrow}
               </p>
-              <h1 className="animate-in fade-in slide-in-from-bottom-3 mt-2 max-w-2xl text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl duration-500">
+              <h2 className="animate-in fade-in slide-in-from-bottom-3 mt-3 max-w-2xl text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl duration-500">
                 {item.title}
-              </h1>
+              </h2>
               <p className="animate-in fade-in slide-in-from-bottom-4 mt-3 max-w-xl text-sm leading-6 text-white/90 sm:text-base duration-500">
                 {item.description}
               </p>
               <div className="animate-in fade-in slide-in-from-bottom-5 mt-6 duration-500">
                 <Link
                   to={item.href}
-                  className="inline-flex h-11 items-center rounded-full bg-white px-6 text-sm font-semibold text-slate-900 shadow-md transition hover:-translate-y-0.5 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  className="inline-flex h-11 items-center rounded-full bg-white px-6 text-sm font-semibold text-foreground shadow-md transition hover:-translate-y-0.5 hover:bg-white/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
                   {item.cta}
                 </Link>
@@ -120,7 +84,7 @@ export default function HeroCarousel() {
             type="button"
             aria-label="Previous slide"
             onClick={prev}
-            className="pointer-events-auto grid size-10 place-items-center rounded-full bg-white/90 text-slate-900 shadow transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="pointer-events-auto grid size-10 place-items-center rounded-full bg-white/90 text-foreground shadow transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
           </button>
@@ -128,7 +92,7 @@ export default function HeroCarousel() {
             type="button"
             aria-label="Next slide"
             onClick={next}
-            className="pointer-events-auto grid size-10 place-items-center rounded-full bg-white/90 text-slate-900 shadow transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="pointer-events-auto grid size-10 place-items-center rounded-full bg-white/90 text-foreground shadow transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <HugeiconsIcon icon={ArrowRight01Icon} size={18} />
           </button>

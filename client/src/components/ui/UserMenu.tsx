@@ -8,6 +8,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 import type { AuthUser } from "../../types/auth";
+import { copy } from "../../constants/copy";
 import UserAvatar from "./UserAvatar";
 import { cn } from "../../lib/utils";
 
@@ -67,7 +68,7 @@ export default function UserMenu({ user, onLogout }: UserMenuProps) {
               className={menuItemClass}
             >
               <HugeiconsIcon icon={Settings01Icon} size={16} />
-              Profile settings
+              {copy.nav.profile}
             </Link>
             <Link
               role="menuitem"

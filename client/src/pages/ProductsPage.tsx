@@ -1,9 +1,10 @@
 import ProductCatalog from "../components/catalog/ProductCatalog";
+import PageContainer from "../components/ui/PageContainer";
 
 export default function ProductsPage() {
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+    <PageContainer className="py-2 sm:py-4">
       <ProductCatalog compactHeader />
-    </div>
+    </PageContainer>
   );
 }

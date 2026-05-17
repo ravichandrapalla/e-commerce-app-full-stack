@@ -8,18 +8,15 @@ import initAuth from "./app/initAuth.ts";
 import { Toaster } from "sonner";
 import ErrorBoundary from "./components/ui/ErrorBoundary.tsx";
 
-initAuth(); // this is for making sure user is loggedin after refresh
-
-<Toaster richColors position="top-right" />;
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <Toaster richColors position="top-right" />
-    <AppProviders>
-      <ErrorBoundary>
-        <RouterProvider router={router} />
-      </ErrorBoundary>
-
-      {/* <App /> */}
-    </AppProviders>
-  </StrictMode>,
-);
+void initAuth().finally(() => {
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <Toaster richColors position="top-right" />
+      <AppProviders>
+        <ErrorBoundary>
+          <RouterProvider router={router} />
+        </ErrorBoundary>
+      </AppProviders>
+    </StrictMode>,
+  );
+});

@@ -6,7 +6,7 @@ export default function MainLayout() {
     <div className="min-h-screen overflow-x-hidden bg-slate-50">
       <Navbar />
 
-      <main className="py-4 sm:py-6">
+      <main className="py-6 sm:py-8">
         <Outlet />
       </main>
     </div>

@@ -12,6 +12,8 @@ import ProductCard from "../ui/ProductCard";
 import SkeletonCard from "../ui/SkeletonCard";
 import { useQueryParams } from "../../hooks/useQueryParams";
 import { useDebounce } from "../../hooks/useDebounce";
+import { copy } from "../../constants/copy";
+import { BodyText } from "../ui/typography";
 
 const sortOptions = [
   { value: "newest", label: "Newest" },
@@ -95,12 +97,12 @@ export default function ProductCatalog({ compactHeader = false }: ProductCatalog
       id="shop"
       className="scroll-mt-24 animate-in fade-in slide-in-from-bottom-3 duration-500"
     >
-      <section className="rounded-md border bg-white p-4 shadow-sm sm:p-6">
+      <section className="section-surface">
         <div className="grid gap-5 lg:grid-cols-[1fr_420px] lg:items-end">
           <div>
             {!compactHeader && (
               <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                Catalog
+                {copy.home.catalog.eyebrow}
               </p>
             )}
             <h2
@@ -111,12 +113,11 @@ export default function ProductCatalog({ compactHeader = false }: ProductCatalog
               }
             >
               {compactHeader
-                ? "All products"
-                : "Find the right product without fighting the interface"}
+                ? copy.home.catalog.compactTitle
+                : copy.home.catalog.title}
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-              Search first, refine only when needed, and keep the page fast for a
-              growing catalog.
+              {copy.home.catalog.description}
             </p>
           </div>
 
@@ -130,7 +131,7 @@ export default function ProductCatalog({ compactHeader = false }: ProductCatalog
                 id="product-search"
                 value={searchInput}
                 onChange={handleSearchChange}
-                placeholder="Search products..."
+                placeholder={copy.catalog.searchPlaceholder}
                 className="h-full min-w-0 flex-1 bg-transparent text-sm outline-none"
               />
             </div>
@@ -142,7 +143,7 @@ export default function ProductCatalog({ compactHeader = false }: ProductCatalog
                 className="inline-flex h-9 items-center gap-2 rounded-md border bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
               >
                 <HugeiconsIcon icon={FilterHorizontalIcon} size={16} />
-                Filters
+                {copy.catalog.filters}
                 {activeFilterCount > 0 && (
                   <span className="rounded-full bg-slate-950 px-2 py-0.5 text-xs text-white">
                     {activeFilterCount}
@@ -156,7 +157,7 @@ export default function ProductCatalog({ compactHeader = false }: ProductCatalog
                   className="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
                 >
                   <HugeiconsIcon icon={FilterResetIcon} size={16} />
-                  Clear
+                  {copy.catalog.clear}
                 </button>
               )}
             </div>
@@ -227,19 +228,18 @@ export default function ProductCatalog({ compactHeader = false }: ProductCatalog
                 }
                 className="size-4 rounded border-slate-300"
               />
-              In stock only
+              {copy.catalog.inStockOnly}
             </label>
           </div>
         )}
       </section>
 
-      <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-slate-600">
-          {isLoading ? "Loading products..." : `${data?.total || 0} product(s) found`}
-        </p>
-        <p className="text-sm text-slate-500">
-          Page {page} of {pages}
-        </p>
+      <div className="mt-6">
+        <BodyText className="text-foreground/80">
+          {isLoading
+            ? copy.catalog.loading
+            : copy.catalog.results(data?.total || 0)}
+        </BodyText>
       </div>
 
       {isLoading ? (
@@ -255,18 +255,18 @@ export default function ProductCatalog({ compactHeader = false }: ProductCatalog
           ))}
         </div>
       ) : (
-        <div className="mt-4 rounded-md border bg-white p-8 text-center shadow-sm">
-          <h3 className="text-lg font-semibold">No matching products</h3>
-          <p className="mt-2 text-sm text-slate-600">
-            Try clearing filters or searching for a broader term.
-          </p>
+        <div className="section-surface mt-6 text-center">
+          <h3 className="text-lg font-semibold text-foreground">
+            {copy.catalog.noResultsTitle}
+          </h3>
+          <BodyText className="mt-2">{copy.catalog.noResultsDescription}</BodyText>
           {hasFilters && (
             <button
               type="button"
               onClick={clearFilters}
-              className="mt-4 rounded-md bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+              className="mt-4 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
             >
-              Clear filters
+              {copy.catalog.clear}
             </button>
           )}
         </div>
