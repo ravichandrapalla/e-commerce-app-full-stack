@@ -1,36 +1,64 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getCartApi, addToCartApi } from "../features/cart/cart.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  addToCartApi,
+  decrementCartApi,
+  getCartApi,
+  removeCartApi,
+  updateCartApi,
+  type ProductPayload,
+  type ProductQuantityPayload,
+} from "../features/cart/cart.service";
 
-export const useCart = () =>
+export const cartQueryKey = ["cart"] as const;
+
+export const useCart = (enabled = true) =>
   useQuery({
-    queryKey: ["cart"],
+    queryKey: cartQueryKey,
     queryFn: async () => {
       const res = await getCartApi();
       return res.data;
     },
+    retry: false,
+    enabled,
   });
 
-export const useAddToCart = () => {
+const useCartInvalidation = () => {
   const qc = useQueryClient();
+  return () => qc.invalidateQueries({ queryKey: cartQueryKey });
+};
+
+export const useAddToCart = () => {
+  const invalidateCart = useCartInvalidation();
 
   return useMutation({
-    mutationFn: addToCartApi,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["cart"] });
-    },
-    onMutate: async (newItem) => {
-      await qc.cancelQueries({
-        queryKey: ["cart"],
-      });
+    mutationFn: (payload: ProductQuantityPayload) => addToCartApi(payload),
+    onSuccess: invalidateCart,
+  });
+};
 
-      const previous = qc.getQueryData(["cart"]);
+export const useSetCartQuantity = () => {
+  const invalidateCart = useCartInvalidation();
 
-      qc.setQueryData(["cart"], (old: any) => {
-        return {
-          ...old,
-        };
-      });
-      return { previous };
-    },
+  return useMutation({
+    mutationFn: (payload: ProductQuantityPayload) => updateCartApi(payload),
+    onSuccess: invalidateCart,
+  });
+};
+
+export const useDecrementCartItem = () => {
+  const invalidateCart = useCartInvalidation();
+
+  return useMutation({
+    mutationFn: (payload: ProductPayload) => decrementCartApi(payload),
+    onSuccess: invalidateCart,
+  });
+};
+
+export const useRemoveCartItem = () => {
+  const invalidateCart = useCartInvalidation();
+
+  return useMutation({
+    mutationFn: (payload: ProductPayload) => removeCartApi(payload),
+    onSuccess: invalidateCart,
   });
 };

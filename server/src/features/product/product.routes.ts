@@ -13,8 +13,7 @@ router.get("/:id", getOne);
 
 // admin only
 router.post("/", protect, restrictTo("ADMIN"), upload.single("image"), create);
+router.patch("/:id", protect, restrictTo("ADMIN"), update);
+router.delete("/:id", protect, restrictTo("ADMIN"), remove);
 
 export default router;
-router.patch("/:id", protect, restrictTo("ADMIN"), update);
-
-router.delete("/:id", protect, restrictTo("ADMIN"), remove);

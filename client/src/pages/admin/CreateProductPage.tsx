@@ -11,10 +11,11 @@ const schema = z.object({
   price: z.coerce.number(),
   stock: z.coerce.number(),
   categoryId: z.string(),
-  image: z.any(),
+  image: z.instanceof(FileList).optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
+type FormInputValues = z.input<typeof schema>;
 
 export default function CreateProductPage() {
   const createMutation = useCreateProduct();
@@ -26,7 +27,7 @@ export default function CreateProductPage() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<FormInputValues, unknown, FormValues>({
     resolver: zodResolver(schema),
   });
 
@@ -109,7 +110,7 @@ export default function CreateProductPage() {
           >
             <option value="">Select Category</option>
 
-            {categories?.map((cat: any) => (
+            {categories?.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>

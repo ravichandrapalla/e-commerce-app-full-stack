@@ -1,10 +1,12 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   createProductApi,
   getProductsApi,
+  updateProductApi,
 } from "../../services/product.service";
+import type { ProductSearchParams, ProductUpdateInput } from "../../types/ecommerce";
 
-export const useProducts = (params: any) =>
+export const useProducts = (params: ProductSearchParams) =>
   useQuery({
     queryKey: ["products", params],
     queryFn: async () => {
@@ -17,3 +19,24 @@ export const useCreateProduct = () =>
   useMutation({
     mutationFn: createProductApi,
   });
+
+export const useUpdateProduct = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: ProductUpdateInput;
+    }) => {
+      const res = await updateProductApi(id, data);
+      return res.data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["products"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
+    },
+  });
+};

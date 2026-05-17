@@ -1,11 +1,20 @@
 import cloudinary from "../config/cloudinary";
 
-export const uploadImage = async (fileBuffer: Buffer) => {
+type UploadOptions = {
+  folder?: string;
+};
+
+export const uploadImage = async (
+  fileBuffer: Buffer,
+  options: UploadOptions = {},
+) => {
+  const folder = options.folder ?? "ecommerce";
+
   return new Promise((resolve, reject) => {
     cloudinary.uploader
       .upload_stream(
         {
-          folder: "ecommerce",
+          folder,
         },
         (err, result) => {
           if (err) return reject(err);

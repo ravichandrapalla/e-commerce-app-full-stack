@@ -6,7 +6,7 @@ export const createProduct = async (data: any) => {
 
 export const getProducts = async (query: any) => {
   const page = Number(query.page || 1);
-  const limit = Number(query.limit || 10);
+  const limit = Math.min(Number(query.limit || 10), 50);
   const skip = (page - 1) * limit;
 
   const where: any = {
@@ -27,13 +27,31 @@ export const getProducts = async (query: any) => {
     };
   }
 
+  if (query.categoryId) {
+    where.categoryId = query.categoryId;
+  }
+
+  if (query.inStock === "true") {
+    where.stock = {
+      gt: 0,
+    };
+  }
+
+  const sortMap: Record<string, any> = {
+    newest: { createdAt: "desc" },
+    price_asc: { price: "asc" },
+    price_desc: { price: "desc" },
+    stock_desc: { stock: "desc" },
+  };
+  const orderBy = sortMap[query.sort] || sortMap.newest;
+
   const [products, total] = await Promise.all([
     prisma.product.findMany({
       where,
       include: { category: true },
       skip,
       take: limit,
-      orderBy: { createdAt: "desc" },
+      orderBy,
     }),
     prisma.product.count({ where }),
   ]);

@@ -4,6 +4,7 @@ import {
   loginApi,
   logoutApi,
   registerApi,
+  updateProfileApi,
 } from "../../services/auth.service";
 
 export const useRegister = () => {
@@ -32,5 +33,11 @@ export const useSelf = () => {
       return res.data.user;
     },
     retry: false,
+  });
+};
+
+export const useUpdateProfile = () => {
+  return useMutation({
+    mutationFn: updateProfileApi,
   });
 };

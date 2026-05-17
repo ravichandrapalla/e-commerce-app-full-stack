@@ -1,6 +1,7 @@
 import { prisma } from "../../config/db";
 import { comparePasswod, hashPassword } from "../../utils/hash";
 import { signToken } from "../../utils/jwt";
+import { publicUserSelect } from "../../utils/userSelect";
 
 type registerPayloadType = {
   name: string;
@@ -28,8 +29,8 @@ export const registerUser = async (data: registerPayloadType) => {
       email: data.email,
       password: hashedPassword,
     },
+    select: publicUserSelect,
   });
-  // const token = signToken({ userId: user.id });
 
   return { user };
 };
@@ -50,5 +51,26 @@ export const loginUser = async (data: loginPayloadType) => {
 
   const token = signToken({ userId: user.id });
 
-  return { user, token };
+  const safeUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: publicUserSelect,
+  });
+
+  return { user: safeUser!, token };
+};
+
+type UpdateProfileInput = {
+  name?: string;
+  avatarUrl?: string;
+};
+
+export const updateUserProfile = async (
+  userId: string,
+  data: UpdateProfileInput,
+) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data,
+    select: publicUserSelect,
+  });
 };

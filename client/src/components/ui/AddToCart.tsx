@@ -1,63 +1,76 @@
-import { useState } from "react";
-import { Button } from "./button";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { PlusSignIcon, MinusSignIcon } from "@hugeicons/core-free-icons";
-import { useAddToCart, useCart } from "../../hooks/useAddToCart";
+import { MinusSignIcon, PlusSignIcon } from "@hugeicons/core-free-icons";
+import type { Product } from "../../types/ecommerce";
+import { Button } from "./button";
+import {
+  useAddToCart,
+  useCart,
+  useDecrementCartItem,
+} from "../../hooks/useAddToCart";
 
-export default function AddToCart({ product }) {
-  const { data, isLoading } = useCart();
-  const [qty, setQty] = useState(
-    data?.items?.find((item) => item.product?.id === product.id)?.quantity || 0,
-  );
-  console.log(
-    "-->",
-    product,
-    data?.items,
-    data?.items?.find((item) => item.product?.id === product.id)?.quantity || 0,
-  );
+type AddToCartProps = {
+  product: Product;
+};
+
+export default function AddToCart({ product }: AddToCartProps) {
+  const { data } = useCart();
   const addToCart = useAddToCart();
+  const decrementCartItem = useDecrementCartItem();
 
-  const handleCartQtyChange = (type: string) => {
-    switch (type) {
-      case "Add": {
-        setQty((prev: number) => prev + 1);
-        addToCart.mutate({ productId: product.id, quantity: 1 });
-        break;
-      }
-      case "Remove": {
-        setQty((prev: number) => prev - 1);
-        break;
-      }
-      default: {
-        return;
-      }
-    }
+  const quantity =
+    data?.items?.find((item) => item.productId === product.id)?.quantity || 0;
+  const isBusy = addToCart.isPending || decrementCartItem.isPending;
+  const isSoldOut = product.stock <= 0;
+  const isAtMaxStock = quantity >= product.stock;
+
+  const increment = () => {
+    if (isBusy || isSoldOut || isAtMaxStock) return;
+    addToCart.mutate({ productId: product.id, quantity: 1 });
   };
 
-  if (!qty)
-    return (
-      <Button onClick={() => handleCartQtyChange("Add")}>Add to Cart</Button>
-    );
-  return (
-    <div className="w-1/4 flex space-x-4 p-2 justify-between items-center">
-      <div className="flex items-center justify-center bg-green-600 rounded p-2 m-0">
-        <HugeiconsIcon
-          icon={PlusSignIcon}
-          size={20}
-          className="text-white cursor-pointer"
-          onClick={() => handleCartQtyChange("Add")}
-        />
-      </div>
+  const decrement = () => {
+    if (isBusy || quantity <= 0) return;
+    decrementCartItem.mutate({ productId: product.id });
+  };
 
-      {qty}
-      <div className="flex items-center justify-center bg-red-600 rounded p-2">
-        <HugeiconsIcon
-          icon={MinusSignIcon}
-          size={20}
-          className="text-white cursor-pointer"
-          onClick={() => handleCartQtyChange("Remove")}
-        />
-      </div>
+  if (quantity === 0) {
+    return (
+      <Button
+        type="button"
+        onClick={increment}
+        disabled={isBusy || isSoldOut}
+        className="h-10 w-full text-sm"
+      >
+        {isSoldOut ? "Sold out" : "Add to cart"}
+      </Button>
+    );
+  }
+
+  return (
+    <div className="flex h-10 w-full items-center justify-between rounded-md border bg-white">
+      <button
+        type="button"
+        aria-label="Decrease quantity"
+        onClick={decrement}
+        disabled={isBusy}
+        className="grid h-full w-11 place-items-center text-slate-700 transition hover:bg-slate-100 disabled:opacity-50"
+      >
+        <HugeiconsIcon icon={MinusSignIcon} size={18} />
+      </button>
+
+      <span className="min-w-12 text-center text-sm font-semibold">
+        {quantity}
+      </span>
+
+      <button
+        type="button"
+        aria-label="Increase quantity"
+        onClick={increment}
+        disabled={isBusy || isAtMaxStock}
+        className="grid h-full w-11 place-items-center text-slate-700 transition hover:bg-slate-100 disabled:opacity-50"
+      >
+        <HugeiconsIcon icon={PlusSignIcon} size={18} />
+      </button>
     </div>
   );
 }

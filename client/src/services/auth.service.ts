@@ -26,3 +26,9 @@ export const logoutApi = () => {
 export const getSelfApi = () => {
   return api.get("/auth/self");
 };
+
+export const updateProfileApi = (data: FormData) => {
+  return api.patch("/auth/profile", data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};

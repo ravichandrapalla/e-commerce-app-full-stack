@@ -1,11 +1,10 @@
 import { api } from "../lib/axios";
-
-type ProductSearchParams = {
-  search?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  page?: number;
-};
+import type {
+  Product,
+  ProductListResponse,
+  ProductSearchParams,
+  ProductUpdateInput,
+} from "../types/ecommerce";
 
 export const getProductsApi = (data: ProductSearchParams) => {
   const params = new URLSearchParams();
@@ -16,10 +15,10 @@ export const getProductsApi = (data: ProductSearchParams) => {
     }
   });
 
-  return api.get(`/products?${params.toString()}`);
+  return api.get<ProductListResponse>(`/products?${params.toString()}`);
 };
 
-export const getProductApi = (id: string) => api.get(`/products/${id}`);
+export const getProductApi = (id: string) => api.get<Product>(`/products/${id}`);
 
 export const createProductApi = (data: FormData) =>
   api.post("/products", data, {
@@ -27,3 +26,6 @@ export const createProductApi = (data: FormData) =>
       "Content-Type": "multipart/form-data",
     },
   });
+
+export const updateProductApi = (id: string, data: ProductUpdateInput) =>
+  api.patch<Product>(`/products/${id}`, data);

@@ -50,7 +50,11 @@ export const getOne = async (req: Request, res: Response) => {
   res.json(product);
 };
 export const update = async (req: Request, res: Response) => {
-  const product = await updateProduct(req.params.id as string, req.body);
+  const product = await updateProduct(req.params.id as string, {
+    ...req.body,
+    price: req.body.price === undefined ? undefined : Number(req.body.price),
+    stock: req.body.stock === undefined ? undefined : Number(req.body.stock),
+  });
 
   res.json(product);
 };

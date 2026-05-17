@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from "react-redux";
-import { loginSchema } from "../features/auth/auth.schema";
+import { loginSchema, type LoginFormValues } from "../features/auth/auth.schema";
 import { useLogin } from "../features/auth/auth.hooks";
 import { setUser } from "../features/auth/auth.slice";
 import { Input } from "../components/ui/input";
@@ -9,7 +9,7 @@ import { Button } from "../components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
 
@@ -17,7 +17,7 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: LoginFormValues) => {
     const res = await loginMutation.mutateAsync(data);
     dispatch(setUser(res.data.user));
     navigate("/");

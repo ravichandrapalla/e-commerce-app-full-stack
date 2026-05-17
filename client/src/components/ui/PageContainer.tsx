@@ -1,5 +1,5 @@
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 
 export default function PageContainer({ children }: PropsWithChildren) {
-  return <div className="max-w-7xl mx-auto px-4">{children}</div>;
+  return <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>;
 }
