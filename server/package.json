@@ -12,7 +12,8 @@
     "db:migrate": "prisma migrate deploy",
     "seed:catalog": "ts-node --transpile-only prisma/seed-catalog.ts",
     "seed:assign": "ts-node --transpile-only prisma/seed-users-assign.ts",
-    "optimize-image": "ts-node --transpile-only scripts/optimize-image.ts"
+    "optimize-image": "ts-node --transpile-only scripts/optimize-image.ts",
+    "setup-stripe-webhook": "node scripts/setup-stripe-webhook.mjs"
   },
   "engines": {
     "node": ">=20"
