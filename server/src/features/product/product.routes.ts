@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { create, getOne, list, remove, update } from "./product.controller";
 import { protect } from "../../middlewares/auth.middleware";
+import { requireEmailVerified } from "../../middlewares/requireEmailVerified.middleware";
 import { restrictTo } from "../../middlewares/role.middleware";
-import { upload } from "../../middlewares/upload.middleware";
+import { runProductImageUpload } from "../../middlewares/runImageUpload.middleware";
 import { ROLES } from "../../constants/roles";
 
 const router = Router();
@@ -13,19 +14,23 @@ router.get("/:id", getOne);
 router.post(
   "/",
   protect,
+  requireEmailVerified,
   restrictTo(ROLES.ADMIN, ROLES.SELLER),
-  upload.single("image"),
+  runProductImageUpload,
   create,
 );
 router.patch(
   "/:id",
   protect,
+  requireEmailVerified,
   restrictTo(ROLES.ADMIN, ROLES.SELLER),
+  runProductImageUpload,
   update,
 );
 router.delete(
   "/:id",
   protect,
+  requireEmailVerified,
   restrictTo(ROLES.ADMIN, ROLES.SELLER),
   remove,
 );

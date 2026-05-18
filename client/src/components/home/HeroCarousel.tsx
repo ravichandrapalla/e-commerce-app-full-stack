@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -7,26 +7,67 @@ import {
 } from "@hugeicons/core-free-icons";
 
 import { copy } from "../../constants/copy";
+import { useHeroSlides } from "../../features/hero/hero.hooks";
 import { cn } from "../../lib/utils";
 import { typography } from "../../lib/typography";
 
-const slides = copy.home.hero.slides;
 const AUTOPLAY_MS = 6000;
 
+type CarouselSlide = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  cta: string;
+  href: string;
+  image: string;
+  accent: string;
+};
+
 export default function HeroCarousel() {
+  const { data: apiSlides } = useHeroSlides();
+
+  const slides = useMemo<CarouselSlide[]>(() => {
+    if (apiSlides?.length) {
+      return apiSlides.map((slide) => ({
+        id: slide.id,
+        eyebrow: slide.eyebrow,
+        title: slide.title,
+        description: slide.description,
+        cta: slide.cta,
+        href: slide.href,
+        image: slide.imageUrl,
+        accent: slide.accent,
+      }));
+    }
+
+    return [...copy.home.hero.slides];
+  }, [apiSlides]);
+
   const [active, setActive] = useState(0);
 
-  const goTo = useCallback((index: number) => {
-    setActive((index + slides.length) % slides.length);
-  }, []);
+  useEffect(() => {
+    setActive(0);
+  }, [slides.length]);
+
+  const goTo = useCallback(
+    (index: number) => {
+      if (!slides.length) return;
+      setActive((index + slides.length) % slides.length);
+    },
+    [slides.length],
+  );
 
   const next = useCallback(() => goTo(active + 1), [active, goTo]);
   const prev = useCallback(() => goTo(active - 1), [active, goTo]);
 
   useEffect(() => {
+    if (slides.length <= 1) return;
     const timer = window.setInterval(next, AUTOPLAY_MS);
     return () => window.clearInterval(timer);
-  }, [next]);
+  }, [next, slides.length]);
+
+  if (!slides.length) return null;
 
   return (
     <section
@@ -79,42 +120,46 @@ export default function HeroCarousel() {
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/35 to-transparent" />
 
-        <div className="absolute inset-y-0 left-3 right-3 flex items-center justify-between sm:left-5 sm:right-5">
-          <button
-            type="button"
-            aria-label="Previous slide"
-            onClick={prev}
-            className="pointer-events-auto grid size-10 place-items-center rounded-full bg-white/90 text-foreground shadow transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-          >
-            <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
-          </button>
-          <button
-            type="button"
-            aria-label="Next slide"
-            onClick={next}
-            className="pointer-events-auto grid size-10 place-items-center rounded-full bg-white/90 text-foreground shadow transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-          >
-            <HugeiconsIcon icon={ArrowRight01Icon} size={18} />
-          </button>
-        </div>
+        {slides.length > 1 && (
+          <>
+            <div className="absolute inset-y-0 left-3 right-3 flex items-center justify-between sm:left-5 sm:right-5">
+              <button
+                type="button"
+                aria-label="Previous slide"
+                onClick={prev}
+                className="pointer-events-auto grid size-10 place-items-center rounded-full bg-white/90 text-foreground shadow transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
+              </button>
+              <button
+                type="button"
+                aria-label="Next slide"
+                onClick={next}
+                className="pointer-events-auto grid size-10 place-items-center rounded-full bg-white/90 text-foreground shadow transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                <HugeiconsIcon icon={ArrowRight01Icon} size={18} />
+              </button>
+            </div>
 
-        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
-          {slides.map((item, index) => (
-            <button
-              key={item.id}
-              type="button"
-              aria-label={`Go to slide ${index + 1}`}
-              aria-current={index === active}
-              onClick={() => goTo(index)}
-              className={cn(
-                "h-2 rounded-full transition-all duration-300",
-                index === active
-                  ? "w-8 bg-white"
-                  : "w-2 bg-white/50 hover:bg-white/80",
-              )}
-            />
-          ))}
-        </div>
+            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+              {slides.map((item, index) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  aria-label={`Go to slide ${index + 1}`}
+                  aria-current={index === active}
+                  onClick={() => goTo(index)}
+                  className={cn(
+                    "h-2 rounded-full transition-all duration-300",
+                    index === active
+                      ? "w-8 bg-white"
+                      : "w-2 bg-white/50 hover:bg-white/80",
+                  )}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

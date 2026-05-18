@@ -12,6 +12,7 @@ export type AuthUser = {
   email: string;
   role: UserRole;
   avatarUrl?: string | null;
+  emailVerified: boolean;
 };
 
 /** @deprecated Pre-migration API/DB value */
@@ -32,4 +33,5 @@ export const isAdmin = (role: string) => normalizeRole(role) === ROLES.ADMIN;
 export const toAuthUser = (user: AuthUser): AuthUser => ({
   ...user,
   role: normalizeRole(user.role),
+  emailVerified: user.emailVerified ?? false,
 });

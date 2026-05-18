@@ -12,6 +12,11 @@ import type { RootState } from "../store/store";
 import PageContainer from "../components/ui/PageContainer";
 import { PageHeader } from "../components/ui/typography";
 import { copy } from "../constants/copy";
+import {
+  IMAGE_UPLOAD_ACCEPT,
+  IMAGE_UPLOAD_HINT,
+  validateImageFile,
+} from "../lib/imageUploadValidation";
 
 export default function ProfilePage() {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -21,6 +26,7 @@ export default function ProfilePage() {
 
   const [name, setName] = useState(user?.name || "");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,23 +50,34 @@ export default function ProfilePage() {
 
   const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please choose an image file");
+    if (!file) {
+      setAvatarFile(null);
+      setAvatarError(null);
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image must be under 5 MB");
+    const validationError = validateImageFile(file);
+    if (validationError) {
+      setAvatarFile(null);
+      setAvatarError(validationError);
+      event.target.value = "";
       return;
     }
 
+    setAvatarError(null);
     setAvatarFile(file);
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (avatarFile) {
+      const validationError = validateImageFile(avatarFile);
+      if (validationError) {
+        setAvatarError(validationError);
+        return;
+      }
+    }
 
     try {
       const formData = new FormData();
@@ -79,6 +96,7 @@ export default function ProfilePage() {
       const res = await updateProfile.mutateAsync(formData);
       dispatch(setUser(toAuthUser(res.data.user)));
       setAvatarFile(null);
+      setAvatarError(null);
       toast.success(labels.success);
     } catch {
       toast.error(labels.error);
@@ -113,11 +131,14 @@ export default function ProfilePage() {
               <input
                 id="avatar"
                 type="file"
-                accept="image/*"
+                accept={IMAGE_UPLOAD_ACCEPT}
                 className="sr-only"
                 onChange={handleAvatarChange}
               />
-              <p className="text-xs text-muted-foreground">{labels.photoHint}</p>
+              <p className="text-xs text-muted-foreground">{IMAGE_UPLOAD_HINT}</p>
+              {avatarError && (
+                <p className="text-sm text-red-500">{avatarError}</p>
+              )}
             </div>
           </div>
 

@@ -1,16 +1,14 @@
 import { Outlet, NavLink } from "react-router-dom";
 import { adminLinks } from "../constants/adminLinks";
 import { cn } from "../lib/utils";
-import { STORE_NAME } from "../constants/brand";
+import BrandLogo from "../components/ui/BrandLogo";
 
 export default function AdminLayout() {
   return (
     <div className="grid min-h-screen grid-cols-1 bg-slate-50 lg:grid-cols-[248px_1fr]">
       <aside className="border-b bg-white p-4 shadow-sm lg:border-b-0 lg:border-r">
         <div className="mb-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            {STORE_NAME}
-          </p>
+          <BrandLogo size="sm" className="text-slate-950" />
           <h2 className="mt-1 text-2xl font-semibold">Admin</h2>
         </div>
 
@@ -19,7 +17,7 @@ export default function AdminLayout() {
             <NavLink
               key={link.path}
               to={link.path}
-              end={link.path === "/admin"}
+              end
               className={({ isActive }) =>
                 cn(
                   "block rounded-md px-3 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400",

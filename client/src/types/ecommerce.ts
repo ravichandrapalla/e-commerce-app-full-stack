@@ -8,6 +8,8 @@ export type ProductSeller = {
   name: string;
 };
 
+export type ProductApprovalStatus = "PENDING" | "APPROVED" | "REJECTED";
+
 export type Product = {
   id: string;
   title: string;
@@ -16,10 +18,35 @@ export type Product = {
   stock: number;
   imageUrl?: string | null;
   isPublished: boolean;
+  approvalStatus?: ProductApprovalStatus;
+  rejectionReason?: string | null;
   categoryId?: string;
   category?: Category;
   sellerId?: string;
-  seller?: ProductSeller;
+  seller?: ProductSeller & {
+    email?: string;
+    sellerReputation?: number;
+  };
+};
+
+export type PendingApprovalProduct = Product & {
+  seller: {
+    id: string;
+    name: string;
+    email: string;
+    sellerReputation: number;
+  };
+};
+
+export type PendingApprovalsResponse = {
+  products: PendingApprovalProduct[];
+  sellersEligibleForBulk: {
+    id: string;
+    name: string;
+    email: string;
+    sellerReputation: number;
+    _count: { products: number };
+  }[];
 };
 
 export type ProductSearchParams = {
@@ -112,6 +139,7 @@ export type DashboardStats = {
   products: number;
   lowStockProducts: number;
   outOfStockProducts: number;
+  pendingApprovals: number;
   orders: number;
   pendingFulfillment: number;
   revenue: number;

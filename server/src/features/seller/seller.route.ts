@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { protect } from "../../middlewares/auth.middleware";
+import { requireEmailVerified } from "../../middlewares/requireEmailVerified.middleware";
 import { restrictTo } from "../../middlewares/role.middleware";
 import { ROLES } from "../../constants/roles";
 import {
@@ -11,7 +12,7 @@ import {
 
 const router = Router();
 
-router.use(protect, restrictTo(ROLES.SELLER));
+router.use(protect, requireEmailVerified, restrictTo(ROLES.SELLER));
 
 router.get("/stats", getStats);
 router.get("/products", listProducts);

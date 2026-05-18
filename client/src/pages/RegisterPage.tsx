@@ -28,7 +28,9 @@ export default function RegisterPage() {
   const onSubmit = async (data: registrationType) => {
     const res = await registrationMutation.mutateAsync(data);
     if (res.status === 201) {
-      navigate("/login");
+      navigate("/verify-email-pending", {
+        state: { email: data.email },
+      });
     }
   };
 

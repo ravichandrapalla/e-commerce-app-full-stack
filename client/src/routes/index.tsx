@@ -15,7 +15,11 @@ import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminProductsPage from "../pages/admin/AdminProductsPage";
 import AdminOrdersPage from "../pages/admin/AdminOrdersPage";
 import RegisterPage from "../pages/RegisterPage";
+import VerifyEmailPage from "../pages/VerifyEmailPage";
+import VerifyEmailPendingPage from "../pages/VerifyEmailPendingPage";
 import CreateProductPage from "../pages/admin/CreateProductPage";
+import AdminProductApprovalsPage from "../pages/admin/AdminProductApprovalsPage";
+import AdminHeroCarouselPage from "../pages/admin/AdminHeroCarouselPage";
 import OrdersPage from "../pages/OrdersPage";
 import CheckoutSuccessPage from "../pages/CheckoutSuccessPage";
 import CheckoutCancelPage from "../pages/CheckoutCancelPage";
@@ -35,6 +39,14 @@ export const router = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterPage />,
+  },
+  {
+    path: "/verify-email",
+    element: <VerifyEmailPage />,
+  },
+  {
+    path: "/verify-email-pending",
+    element: <VerifyEmailPendingPage />,
   },
   {
     element: <MainLayout />,
@@ -70,12 +82,20 @@ export const router = createBrowserRouter([
             element: <AdminProductsPage />,
           },
           {
+            path: "products/approvals",
+            element: <AdminProductApprovalsPage />,
+          },
+          {
             path: "orders",
             element: <AdminOrdersPage />,
           },
           {
             path: "products/create",
             element: <CreateProductPage />,
+          },
+          {
+            path: "hero",
+            element: <AdminHeroCarouselPage />,
           },
         ],
       },

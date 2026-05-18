@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { protect } from "../../middlewares/auth.middleware";
+import { requireEmailVerified } from "../../middlewares/requireEmailVerified.middleware";
 import { restrictTo } from "../../middlewares/role.middleware";
 import { ROLES } from "../../constants/roles";
 import {
@@ -12,7 +13,7 @@ import {
 
 const router = Router();
 
-router.use(protect, restrictTo(ROLES.BUYER));
+router.use(protect, requireEmailVerified, restrictTo(ROLES.BUYER));
 
 router.get("/", getCart);
 router.post("/add", addItem);

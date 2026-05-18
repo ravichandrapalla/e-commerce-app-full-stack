@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { AuthRequest } from "../../middlewares/auth.middleware";
-import { canManageCatalog } from "../../constants/roles";
+import { canManageCatalog, isAdmin } from "../../constants/roles";
 import {
   createProduct,
   deleteProduct,
@@ -10,19 +10,23 @@ import {
   updateProduct,
 } from "./product.service";
 import { createProductSchema, querySchema } from "./product.validation";
-import { uploadImage } from "../../utils/uploadImage";
+import { uploadProductImage as uploadProductImageToCloudinary } from "../../utils/productImageUpload";
+import { validateImageFile } from "../../utils/validateImageFile";
+import { isStorefrontVisible } from "./product.visibility";
 
 export const create = async (req: AuthRequest, res: Response) => {
   if (!req.user || !canManageCatalog(req.user.role)) {
     return res.status(403).json({ message: "Forbidden" });
   }
 
-  let imageUrl = "";
-
-  if (req.file) {
-    const uploaded = (await uploadImage(req.file.buffer)) as { secure_url: string };
-    imageUrl = uploaded.secure_url;
+  const imageValidationError = validateImageFile(req.file, { required: true });
+  if (imageValidationError) {
+    return res.status(400).json({ message: imageValidationError });
   }
+
+  const upload = await uploadProductImageToCloudinary(req.file!, res);
+  if (!upload.ok) return upload.response;
+  const imageUrl = upload.imageUrl;
 
   const parsed = createProductSchema.parse({
     ...req.body,
@@ -31,6 +35,7 @@ export const create = async (req: AuthRequest, res: Response) => {
     imageUrl,
   });
 
+  const submittedByAdmin = isAdmin(req.user.role);
   const product = await createProduct({
     title: parsed.title,
     description: parsed.description,
@@ -38,10 +43,15 @@ export const create = async (req: AuthRequest, res: Response) => {
     stock: parsed.stock,
     categoryId: parsed.categoryId,
     sellerId: req.user.id,
-    ...(parsed.imageUrl ? { imageUrl: parsed.imageUrl } : {}),
+    submittedByAdmin,
+    imageUrl: parsed.imageUrl,
   });
 
-  res.status(201).json({ product });
+  const message = submittedByAdmin
+    ? "Product created and published"
+    : "Product submitted for admin approval";
+
+  res.status(201).json({ product, message });
 };
 
 export const list = async (req: AuthRequest, res: Response) => {
@@ -54,6 +64,16 @@ export const getOne = async (req: AuthRequest, res: Response) => {
   const product = await getProductById(req.params.id as string);
 
   if (!product) {
+    return res.status(404).json({
+      message: "Product not found",
+    });
+  }
+
+  const canViewPrivate =
+    req.user &&
+    (isAdmin(req.user.role) || product.sellerId === req.user.id);
+
+  if (!isStorefrontVisible(product) && !canViewPrivate) {
     return res.status(404).json({
       message: "Product not found",
     });
@@ -77,15 +97,36 @@ export const update = async (req: AuthRequest, res: Response) => {
     return res.status(404).json({ message: "Product not found" });
   }
 
-  const product = await updateProduct(req.params.id as string, {
-    ...req.body,
-    price: req.body.price === undefined ? undefined : Number(req.body.price),
-    stock: req.body.stock === undefined ? undefined : Number(req.body.stock),
-    isPublished:
-      req.body.isPublished === undefined
-        ? undefined
-        : req.body.isPublished === true || req.body.isPublished === "true",
-  });
+  let imageUrl: string | undefined;
+
+  if (req.file) {
+    const imageValidationError = validateImageFile(req.file);
+    if (imageValidationError) {
+      return res.status(400).json({ message: imageValidationError });
+    }
+
+    const upload = await uploadProductImageToCloudinary(req.file, res);
+    if (!upload.ok) return upload.response;
+    imageUrl = upload.imageUrl;
+  }
+
+  const adminUser = isAdmin(req.user.role);
+  const product = await updateProduct(
+    req.params.id as string,
+    {
+      ...req.body,
+      price: req.body.price === undefined ? undefined : Number(req.body.price),
+      stock: req.body.stock === undefined ? undefined : Number(req.body.stock),
+      ...(imageUrl ? { imageUrl } : {}),
+      ...(adminUser && req.body.isPublished !== undefined
+        ? {
+            isPublished:
+              req.body.isPublished === true || req.body.isPublished === "true",
+          }
+        : {}),
+    },
+    { isAdmin: adminUser },
+  );
 
   res.json(product);
 };

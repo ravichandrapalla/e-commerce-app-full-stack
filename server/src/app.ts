@@ -1,7 +1,6 @@
 // app config only
 import express from "express";
 import cors from "cors";
-import { PRODUCT_IMAGES_ROOT } from "./config/productImages";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
@@ -13,14 +12,31 @@ import adminRoutes from "./features/admin/admin.route";
 import sellerRoutes from "./features/seller/seller.route";
 import categoryRoutes from "./features/category/category.routes";
 import paymentRoutes from "./features/payment/payment.routes";
+import heroRoutes from "./features/hero/hero.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 import rateLimit from "express-rate-limit";
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 app.use(helmet());
 
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+const clientOrigins = (process.env.CLIENT_URL ?? "")
+  .split(",")
+  .map((url) => url.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: clientOrigins.length > 0 ? clientOrigins : true,
+    credentials: true,
+  }),
+);
+
+app.get("/health", (_req, res) => {
+  res.json({ ok: true });
+});
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -29,11 +45,6 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.use(morgan("dev"));
-
-app.use(
-  "/product-images",
-  express.static(PRODUCT_IMAGES_ROOT, { maxAge: "7d", fallthrough: false }),
-);
 
 app.use("/api/v1/payments", paymentRoutes);
 
@@ -48,6 +59,7 @@ app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/seller", sellerRoutes);
 app.use("/api/v1/categories", categoryRoutes);
+app.use("/api/v1/hero-slides", heroRoutes);
 
 app.use(errorHandler);
 

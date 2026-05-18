@@ -4,7 +4,9 @@ import {
   loginApi,
   logoutApi,
   registerApi,
+  resendVerificationApi,
   updateProfileApi,
+  verifyEmailApi,
 } from "../../services/auth.service";
 
 export const useRegister = () => {
@@ -41,3 +43,13 @@ export const useUpdateProfile = () => {
     mutationFn: updateProfileApi,
   });
 };
+
+export const useVerifyEmail = () =>
+  useMutation({
+    mutationFn: (token: string) => verifyEmailApi(token),
+  });
+
+export const useResendVerification = () =>
+  useMutation({
+    mutationFn: (email: string) => resendVerificationApi(email),
+  });

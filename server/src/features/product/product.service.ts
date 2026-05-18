@@ -1,5 +1,7 @@
+import { ProductApprovalStatus } from "@prisma/client";
 import { prisma } from "../../config/db";
 import { isAdmin } from "../../constants/roles";
+import { storefrontProductWhere } from "./product.visibility";
 
 const productInclude = {
   category: true,
@@ -11,19 +13,32 @@ const productInclude = {
   },
 };
 
-export const createProduct = async (
-  data: {
-    title: string;
-    description: string;
-    price: number;
-    stock: number;
-    categoryId: string;
-    imageUrl?: string;
-    sellerId: string;
-  },
-) => {
+export const createProduct = async (data: {
+  title: string;
+  description: string;
+  price: number;
+  stock: number;
+  categoryId: string;
+  imageUrl?: string;
+  sellerId: string;
+  submittedByAdmin: boolean;
+}) => {
+  const approvalStatus = data.submittedByAdmin
+    ? ProductApprovalStatus.APPROVED
+    : ProductApprovalStatus.PENDING;
+
   return prisma.product.create({
-    data,
+    data: {
+      title: data.title,
+      description: data.description,
+      price: data.price,
+      stock: data.stock,
+      categoryId: data.categoryId,
+      sellerId: data.sellerId,
+      imageUrl: data.imageUrl,
+      approvalStatus,
+      isPublished: data.submittedByAdmin,
+    },
     include: productInclude,
   });
 };
@@ -34,7 +49,7 @@ export const getProducts = async (query: Record<string, unknown>) => {
   const skip = (page - 1) * limit;
 
   const where: Record<string, unknown> = {
-    isPublished: true,
+    ...storefrontProductWhere,
   };
 
   if (query.search) {
@@ -129,7 +144,11 @@ export const getProductById = async (id: string) => {
   });
 };
 
-export const getOwnedProduct = async (id: string, userId: string, role: string) => {
+export const getOwnedProduct = async (
+  id: string,
+  userId: string,
+  role: string,
+) => {
   const product = await prisma.product.findUnique({
     where: { id },
   });
@@ -145,10 +164,24 @@ export const getOwnedProduct = async (id: string, userId: string, role: string) 
   return null;
 };
 
-export const updateProduct = async (id: string, data: Record<string, unknown>) => {
+export const updateProduct = async (
+  id: string,
+  data: Record<string, unknown>,
+  options?: { isAdmin: boolean },
+) => {
+  const payload = { ...data };
+
+  if (!options?.isAdmin) {
+    delete payload.isPublished;
+    delete payload.approvalStatus;
+    delete payload.rejectionReason;
+    delete payload.reviewedAt;
+    delete payload.reviewedById;
+  }
+
   return prisma.product.update({
     where: { id },
-    data,
+    data: payload,
     include: productInclude,
   });
 };

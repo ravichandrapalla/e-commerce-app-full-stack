@@ -5,6 +5,10 @@ import { useMemo, useState } from "react";
 import { useUpdateProduct } from "../../features/product/product.hooks";
 import { useSellerProducts } from "../../features/seller/seller.hooks";
 import type { Product } from "../../types/ecommerce";
+import {
+  approvalStatusClass,
+  approvalStatusLabel,
+} from "../../lib/approvalStatus";
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("en-IN", {
@@ -27,13 +31,12 @@ function RestockControl({ product }: { product: Product }) {
       id: product.id,
       data: {
         stock: product.stock + quantity,
-        isPublished: true,
       },
     });
   };
 
   return (
-    <div className="flex items-center justify-end gap-2">
+    <>
       <input
         type="number"
         min={1}
@@ -51,7 +54,7 @@ function RestockControl({ product }: { product: Product }) {
         <HugeiconsIcon icon={PlusSignIcon} size={16} />
         Restock
       </button>
-    </div>
+    </>
   );
 }
 
@@ -67,50 +70,58 @@ export default function SellerProductsPage() {
     () => products.filter((product) => product.stock > 0 && product.stock <= 5),
     [products],
   );
+  const pendingApproval = useMemo(
+    () => products.filter((p) => p.approvalStatus === "PENDING"),
+    [products],
+  );
 
   if (isLoading) {
-    return <div>Loading your products…</div>;
+    return <>Loading your products…</>;
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+    <section className="space-y-5">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <section>
           <h1 className="text-2xl font-semibold">My products</h1>
           <p className="mt-1 text-sm text-slate-600">
-            Manage listings, stock, and visibility for your storefront.
+            New listings are reviewed by admin before they appear to buyers.
           </p>
-        </div>
+        </section>
         <Link
           to="/seller/products/create"
           className="inline-flex h-9 items-center rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white"
         >
           Add product
         </Link>
-      </div>
+      </header>
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-md border bg-white p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Active listings</p>
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <article className="rounded-md border bg-white p-4 shadow-sm">
+          <p className="text-sm text-slate-500">Total listings</p>
           <p className="mt-2 text-3xl font-semibold">{products.length}</p>
-        </div>
-        <div className="rounded-md border bg-white p-4 shadow-sm">
+        </article>
+        <article className="rounded-md border bg-white p-4 shadow-sm">
+          <p className="text-sm text-slate-500">Pending approval</p>
+          <p className="mt-2 text-3xl font-semibold text-amber-700">{pendingApproval.length}</p>
+        </article>
+        <article className="rounded-md border bg-white p-4 shadow-sm">
           <p className="text-sm text-slate-500">Low stock</p>
           <p className="mt-2 text-3xl font-semibold text-amber-700">{lowStockProducts.length}</p>
-        </div>
-        <div className="rounded-md border bg-white p-4 shadow-sm">
+        </article>
+        <article className="rounded-md border bg-white p-4 shadow-sm">
           <p className="text-sm text-slate-500">Out of stock</p>
           <p className="mt-2 text-3xl font-semibold text-red-700">{depletedProducts.length}</p>
-        </div>
-      </div>
+        </article>
+      </section>
 
-      <div className="overflow-hidden rounded-md border bg-white shadow-sm">
+      <section className="overflow-hidden rounded-md border bg-white shadow-sm">
         <table className="w-full">
           <thead className="border-b bg-slate-50">
             <tr>
               <th className="p-4 text-left text-sm font-semibold">Product</th>
               <th className="p-4 text-left text-sm font-semibold">Price</th>
-              <th className="p-4 text-left text-sm font-semibold">Status</th>
+              <th className="p-4 text-left text-sm font-semibold">Review & stock</th>
               <th className="p-4 text-right text-sm font-semibold">Action</th>
             </tr>
           </thead>
@@ -123,17 +134,28 @@ export default function SellerProductsPage() {
                 </td>
                 <td className="p-4">{formatCurrency(product.price)}</td>
                 <td className="p-4">
-                  <span
-                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ring-1 ${getStockBadge(product.stock)}`}
-                  >
-                    {product.stock === 0 ? "Out of stock" : `${product.stock} left`}
+                  <span className="flex flex-col gap-2">
+                    {product.approvalStatus && (
+                      <span
+                        className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold ring-1 ${approvalStatusClass[product.approvalStatus]}`}
+                      >
+                        {approvalStatusLabel[product.approvalStatus]}
+                      </span>
+                    )}
+                    <span
+                      className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold ring-1 ${getStockBadge(product.stock)}`}
+                    >
+                      {product.stock === 0 ? "Out of stock" : `${product.stock} left`}
+                    </span>
+                    {product.approvalStatus === "REJECTED" && product.rejectionReason && (
+                      <span className="text-xs text-red-600">{product.rejectionReason}</span>
+                    )}
                   </span>
-                  {!product.isPublished && (
-                    <span className="ml-2 text-xs text-slate-500">(hidden)</span>
-                  )}
                 </td>
                 <td className="p-4">
-                  <RestockControl product={product} />
+                  <span className="flex items-center justify-end gap-2">
+                    <RestockControl product={product} />
+                  </span>
                 </td>
               </tr>
             ))}
@@ -147,7 +169,7 @@ export default function SellerProductsPage() {
             </Link>
           </p>
         )}
-      </div>
-    </div>
+      </section>
+    </section>
   );
 }

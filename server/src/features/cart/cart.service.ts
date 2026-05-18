@@ -1,4 +1,5 @@
 import { prisma } from "../../config/db";
+import { storefrontProductWhere } from "../product/product.visibility";
 
 const cartInclude = {
   items: {
@@ -23,7 +24,7 @@ export const getOrCreateCart = async (userId: string) => {
 
 const assertProductCanBePurchased = async (productId: string, quantity: number) => {
   const product = await prisma.product.findFirst({
-    where: { id: productId, isPublished: true },
+    where: { id: productId, ...storefrontProductWhere },
   });
 
   if (!product) {

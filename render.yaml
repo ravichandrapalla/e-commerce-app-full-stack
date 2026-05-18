@@ -1,0 +1,36 @@
+# Render Blueprint — BoxInWheels API (free tier)
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: boxinwheels-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm install && npm run db:migrate && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        value: BoxInWheels <onboarding@resend.dev>
+      - key: ORDER_EMAIL_FROM
+        value: BoxInWheels <onboarding@resend.dev>
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false

@@ -46,12 +46,20 @@ export default function AdminDashboardPage() {
           <p className="text-sm font-semibold text-slate-500">Admin overview</p>
           <h1 className="text-2xl font-semibold">Store operations</h1>
         </div>
-        <Link
-          to="/admin/orders"
-          className="inline-flex h-9 items-center justify-center rounded-md bg-slate-950 px-4 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-        >
-          Review orders
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            to="/admin/products/approvals"
+            className="inline-flex h-9 items-center justify-center rounded-md border border-amber-300 bg-amber-50 px-4 text-sm font-semibold text-amber-900"
+          >
+            Approvals ({data.pendingApprovals ?? 0})
+          </Link>
+          <Link
+            to="/admin/orders"
+            className="inline-flex h-9 items-center justify-center rounded-md bg-slate-950 px-4 text-sm font-semibold text-white shadow-sm"
+          >
+            Review orders
+          </Link>
+        </div>
       </div>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

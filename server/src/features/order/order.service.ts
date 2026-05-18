@@ -1,6 +1,7 @@
 import { OrderStatus } from "@prisma/client";
 import { prisma } from "../../config/db";
 import { stripe } from "../../config/stripe";
+import { isStorefrontVisible } from "../product/product.visibility";
 import {
   sendOrderConfirmationEmail,
   sendOrderStatusEmail,
@@ -41,7 +42,7 @@ const getCartForCheckout = async (userId: string) => {
   }
 
   for (const item of cart.items) {
-    if (!item.product.isPublished) {
+    if (!isStorefrontVisible(item.product)) {
       throw new Error(`${item.product.title} is no longer available`);
     }
 

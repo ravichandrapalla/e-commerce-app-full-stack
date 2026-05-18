@@ -14,13 +14,16 @@ api.interceptors.response.use(
   },
 
   (error) => {
+    const code = error.response?.data?.code;
     const message =
       error.response?.data?.message ??
       (error.code === "ERR_NETWORK"
         ? "Cannot reach the API server. Start it with: cd server && npm run dev"
         : "Something went wrong");
 
-    toast.error(message);
+    if (code !== "EMAIL_NOT_VERIFIED") {
+      toast.error(message);
+    }
 
     return Promise.reject(error);
   },

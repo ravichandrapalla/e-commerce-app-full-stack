@@ -20,12 +20,7 @@ export const getProductsApi = (data: ProductSearchParams) => {
 
 export const getProductApi = (id: string) => api.get<Product>(`/products/${id}`);
 
-export const createProductApi = (data: FormData) =>
-  api.post("/products", data, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+export const createProductApi = (data: FormData) => api.post("/products", data);
 
 export const updateProductApi = (id: string, data: ProductUpdateInput) =>
   api.patch<Product>(`/products/${id}`, data);

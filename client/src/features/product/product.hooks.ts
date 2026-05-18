@@ -24,6 +24,7 @@ export const useCreateProduct = () => {
       qc.invalidateQueries({ queryKey: ["products"] });
       qc.invalidateQueries({ queryKey: ["seller-products"] });
       qc.invalidateQueries({ queryKey: ["seller-stats"] });
+      qc.invalidateQueries({ queryKey: ["admin-pending-approvals"] });
     },
   });
 };
@@ -47,6 +48,8 @@ export const useUpdateProduct = () => {
       qc.invalidateQueries({ queryKey: ["seller-products"] });
       qc.invalidateQueries({ queryKey: ["seller-stats"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
+      qc.invalidateQueries({ queryKey: ["admin-pending-approvals"] });
+      qc.invalidateQueries({ queryKey: ["admin-catalog-products"] });
     },
   });
 };

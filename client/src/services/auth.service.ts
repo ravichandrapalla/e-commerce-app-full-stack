@@ -28,8 +28,10 @@ export const getSelfApi = () => {
   return api.get("/auth/self");
 };
 
-export const updateProfileApi = (data: FormData) => {
-  return api.patch("/auth/profile", data, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-};
+export const updateProfileApi = (data: FormData) => api.patch("/auth/profile", data);
+
+export const verifyEmailApi = (token: string) =>
+  api.get("/auth/verify-email", { params: { token } });
+
+export const resendVerificationApi = (email: string) =>
+  api.post("/auth/resend-verification", { email });

@@ -6,7 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "seed:catalog": "ts-node --transpile-only prisma/seed-catalog.ts"
+    "build": "prisma generate && tsc -p tsconfig.build.json",
+    "start": "node dist/index.js",
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "seed:catalog": "ts-node --transpile-only prisma/seed-catalog.ts",
+    "seed:assign": "ts-node --transpile-only prisma/seed-users-assign.ts",
+    "optimize-image": "ts-node --transpile-only scripts/optimize-image.ts"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +23,7 @@
   "type": "commonjs",
   "dependencies": {
     "@prisma/client": "^6.19.3",
+    "@vercel/node": "^5.8.2",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.10.0",
     "cookie-parser": "^1.4.7",

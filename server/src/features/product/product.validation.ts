@@ -6,7 +6,7 @@ export const createProductSchema = z.object({
   price: z.number().positive(),
   stock: z.number().int().min(0),
   categoryId: z.string(),
-  imageUrl: z.string().optional(),
+  imageUrl: z.string().url("A valid product image URL is required"),
 });
 
 export const querySchema = z.object({

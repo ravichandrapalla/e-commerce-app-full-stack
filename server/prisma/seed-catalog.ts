@@ -1,17 +1,11 @@
 import "dotenv/config";
-import fs from "fs/promises";
-import path from "path";
-import { PrismaClient, Role } from "@prisma/client";
+import { PrismaClient, ProductApprovalStatus, Role } from "@prisma/client";
 import {
   CATALOG_CATEGORY_LABELS,
   CATALOG_CATEGORY_NAMES,
   CATALOG_CATEGORY_SLUGS,
   type CatalogCategorySlug,
 } from "../src/constants/catalogCategories";
-import {
-  PRODUCT_IMAGES_ROOT,
-  productImagePublicPath,
-} from "../src/config/productImages";
 import { hashPassword } from "../src/utils/hash";
 
 const prisma = new PrismaClient();
@@ -21,8 +15,10 @@ const MAX_PRODUCTS = 60;
 const ADMIN_EMAIL = "admin@gmail.com";
 const ADMIN_PASSWORD = "admin@1234";
 const ADMIN_NAME = "admin";
-
-const IMAGE_EXT = /\.(jpe?g|png|webp)$/i;
+const SELLER_EMAIL = "seller@gmail.com";
+const SELLER_PASSWORD = "seller@1234";
+const SELLER_NAME = "seller";
+const SELLER_REPUTATION = 78;
 
 const PRICE_BY_SLUG: Record<CatalogCategorySlug, [number, number]> = {
   BABY_PRODUCTS: [299, 3499],
@@ -44,25 +40,19 @@ const productsPerCategory = (): number[] => {
   );
 };
 
-const parseTitle = (filename: string, categoryLabel: string) => {
-  const stem = filename.replace(IMAGE_EXT, "");
-  const id = stem.split("_")[0] ?? stem;
-  return `${categoryLabel} #${id}`;
-};
-
-const listImages = async (slug: CatalogCategorySlug) => {
-  const dir = path.join(PRODUCT_IMAGES_ROOT, slug);
-  const entries = await fs.readdir(dir);
-  return entries
-    .filter((name) => IMAGE_EXT.test(name))
-    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-};
-
 const pickPrice = (slug: CatalogCategorySlug, index: number) => {
   const [min, max] = PRICE_BY_SLUG[slug];
   const span = max - min;
   const step = Math.max(1, Math.floor(span / 12));
   return min + (index % 12) * step;
+};
+
+type SeedAssignment = {
+  sellerId: string;
+  submittedByAdmin: boolean;
+  approvalStatus: ProductApprovalStatus;
+  isPublished: boolean;
+  rejectionReason?: string;
 };
 
 async function ensureAdmin() {
@@ -73,12 +63,36 @@ async function ensureAdmin() {
       name: ADMIN_NAME,
       password: hashedPassword,
       role: Role.ADMIN,
+      emailVerified: true,
     },
     create: {
       name: ADMIN_NAME,
       email: ADMIN_EMAIL,
       password: hashedPassword,
       role: Role.ADMIN,
+      emailVerified: true,
+    },
+  });
+}
+
+async function ensureSeller() {
+  const hashedPassword = await hashPassword(SELLER_PASSWORD);
+  return prisma.user.upsert({
+    where: { email: SELLER_EMAIL },
+    update: {
+      name: SELLER_NAME,
+      password: hashedPassword,
+      role: Role.SELLER,
+      sellerReputation: SELLER_REPUTATION,
+      emailVerified: true,
+    },
+    create: {
+      name: SELLER_NAME,
+      email: SELLER_EMAIL,
+      password: hashedPassword,
+      role: Role.SELLER,
+      sellerReputation: SELLER_REPUTATION,
+      emailVerified: true,
     },
   });
 }
@@ -106,21 +120,61 @@ async function ensureCategories() {
   return map;
 }
 
-async function clearPreviousSeed(adminId: string) {
+async function clearPreviousSeed() {
   await prisma.product.deleteMany({
-    where: {
-      sellerId: adminId,
-      description: { contains: SEED_MARKER },
-    },
+    where: { description: { contains: SEED_MARKER } },
   });
 }
 
+const resolveAssignment = (
+  globalIndex: number,
+  adminId: string,
+  sellerId: string,
+): SeedAssignment => {
+  // ~50% admin-owned (auto-approved), ~50% seller-owned with mixed moderation states
+  if (globalIndex % 2 === 0) {
+    return {
+      sellerId: adminId,
+      submittedByAdmin: true,
+      approvalStatus: ProductApprovalStatus.APPROVED,
+      isPublished: true,
+    };
+  }
+
+  const sellerVariant = globalIndex % 10;
+  if (sellerVariant <= 6) {
+    return {
+      sellerId,
+      submittedByAdmin: false,
+      approvalStatus: ProductApprovalStatus.APPROVED,
+      isPublished: true,
+    };
+  }
+  if (sellerVariant <= 8) {
+    return {
+      sellerId,
+      submittedByAdmin: false,
+      approvalStatus: ProductApprovalStatus.PENDING,
+      isPublished: false,
+    };
+  }
+  return {
+    sellerId,
+    submittedByAdmin: false,
+    approvalStatus: ProductApprovalStatus.REJECTED,
+    isPublished: false,
+    rejectionReason: "Image or description needs clearer product details before listing.",
+  };
+};
+
 async function seedProducts(
   adminId: string,
+  sellerId: string,
   categoryIds: Map<string, string>,
 ) {
   const counts = productsPerCategory();
   let created = 0;
+  let globalIndex = 0;
 
   for (let i = 0; i < CATALOG_CATEGORY_SLUGS.length; i++) {
     const slug = CATALOG_CATEGORY_SLUGS[i];
@@ -129,25 +183,21 @@ async function seedProducts(
     const categoryId = categoryIds.get(slug);
     if (!categoryId) continue;
 
-    const images = await listImages(slug);
-    const selected = images.slice(0, limit);
-
-    for (let j = 0; j < selected.length; j++) {
-      const filename = selected[j];
-      const title = parseTitle(filename, label);
-      const price = pickPrice(slug, j);
-      const stock = 20 + ((j * 7) % 80);
+    for (let j = 0; j < limit; j++) {
+      const assignment = resolveAssignment(globalIndex, adminId, sellerId);
+      globalIndex++;
 
       await prisma.product.create({
         data: {
-          title,
-          description: `Curated ${label.toLowerCase()} item from the RaviCommerce catalog. ${SEED_MARKER}`,
-          price,
-          stock,
-          imageUrl: productImagePublicPath(slug, filename),
+          title: `${label} #${j + 1}`,
+          description: `Curated ${label.toLowerCase()} item from the BoxInWheels catalog. ${SEED_MARKER}`,
+          price: pickPrice(slug, j),
+          stock: 20 + ((j * 7) % 80),
           categoryId,
-          sellerId: adminId,
-          isPublished: true,
+          sellerId: assignment.sellerId,
+          approvalStatus: assignment.approvalStatus,
+          isPublished: assignment.isPublished,
+          rejectionReason: assignment.rejectionReason,
         },
       });
       created++;
@@ -158,23 +208,19 @@ async function seedProducts(
 }
 
 async function main() {
-  try {
-    await fs.access(PRODUCT_IMAGES_ROOT);
-  } catch {
-    throw new Error(
-      `Product images not found at ${PRODUCT_IMAGES_ROOT}. Ensure ECOMMERCE_PRODUCT_IMAGES/train exists.`,
-    );
-  }
-
   const admin = await ensureAdmin();
+  const seller = await ensureSeller();
   await pruneLegacyCategories();
   const categoryIds = await ensureCategories();
-  await clearPreviousSeed(admin.id);
-  const count = await seedProducts(admin.id, categoryIds);
+  await clearPreviousSeed();
+  const count = await seedProducts(admin.id, seller.id, categoryIds);
 
-  console.log(`Admin ready: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
+  console.log(`Admin: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
+  console.log(`Seller: ${SELLER_EMAIL} / ${SELLER_PASSWORD} (reputation ${SELLER_REPUTATION})`);
   console.log(`Categories: ${CATALOG_CATEGORY_SLUGS.length}`);
-  console.log(`Products seeded: ${count}`);
+  console.log(
+    `Products seeded: ${count} (~half admin, ~half seller). Add images via admin/seller upload (Cloudinary).`,
+  );
 }
 
 main()

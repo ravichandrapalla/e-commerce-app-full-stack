@@ -2,7 +2,7 @@ import type { PropsWithChildren, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import PageContainer from "./PageContainer";
 import { PageHeader } from "./typography";
-import { STORE_NAME } from "../../constants/brand";
+import BrandLogo from "./BrandLogo";
 
 type AuthFormCardProps = PropsWithChildren<{
   title: string;
@@ -19,9 +19,9 @@ export default function AuthFormCard({
   return (
     <PageContainer className="flex min-h-[calc(100vh-4rem)] items-center py-12 sm:py-16">
       <div className="mx-auto w-full max-w-md">
-        <p className="mb-8 text-center text-sm font-medium text-muted-foreground">
-          {STORE_NAME}
-        </p>
+        <div className="mb-8 flex justify-center">
+          <BrandLogo size="sm" className="text-slate-950" />
+        </div>
         <div className="rounded-xl border bg-card p-6 shadow-sm sm:p-8">
           <PageHeader
             title={title}

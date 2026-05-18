@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { OrderStatus } from "@prisma/client";
+import { OrderStatus, ProductApprovalStatus } from "@prisma/client";
 import { prisma } from "../../config/db";
+import { storefrontProductWhere } from "../product/product.visibility";
 import {
   getAllOrdersForAdmin,
   updateOrderStatusForAdmin,
@@ -13,16 +14,17 @@ export const getDashboardStats = async (_req: Request, res: Response) => {
     products,
     lowStockProducts,
     outOfStockProducts,
+    pendingApprovals,
     orders,
     pendingFulfillment,
     revenue,
   ] = await Promise.all([
     prisma.user.count({ where: { role: "BUYER" } }),
     prisma.user.count({ where: { role: "SELLER" } }),
-    prisma.product.count(),
+    prisma.product.count({ where: storefrontProductWhere }),
     prisma.product.count({
       where: {
-        isPublished: true,
+        ...storefrontProductWhere,
         stock: {
           gt: 0,
           lte: 5,
@@ -31,9 +33,12 @@ export const getDashboardStats = async (_req: Request, res: Response) => {
     }),
     prisma.product.count({
       where: {
-        isPublished: true,
+        ...storefrontProductWhere,
         stock: 0,
       },
+    }),
+    prisma.product.count({
+      where: { approvalStatus: ProductApprovalStatus.PENDING },
     }),
     prisma.order.count(),
     prisma.order.count({
@@ -56,6 +61,7 @@ export const getDashboardStats = async (_req: Request, res: Response) => {
     products,
     lowStockProducts,
     outOfStockProducts,
+    pendingApprovals,
     orders,
     pendingFulfillment,
     revenue: revenue._sum.totalAmount || 0,

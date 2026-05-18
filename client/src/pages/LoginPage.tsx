@@ -25,9 +25,24 @@ export default function LoginPage() {
     (location.state as { from?: string } | null)?.from || "/";
 
   const onSubmit = async (data: LoginFormValues) => {
-    const res = await loginMutation.mutateAsync(data);
-    dispatch(setUser(toAuthUser(res.data.user)));
-    navigate(redirectTo, { replace: true });
+    try {
+      const res = await loginMutation.mutateAsync(data);
+      dispatch(setUser(toAuthUser(res.data.user)));
+      navigate(redirectTo, { replace: true });
+    } catch (error: unknown) {
+      const code =
+        error &&
+        typeof error === "object" &&
+        "response" in error &&
+        (error as { response?: { data?: { code?: string } } }).response?.data?.code;
+
+      if (code === "EMAIL_NOT_VERIFIED") {
+        navigate("/verify-email-pending", {
+          replace: true,
+          state: { email: data.email },
+        });
+      }
+    }
   };
 
   return (

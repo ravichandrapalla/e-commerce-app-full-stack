@@ -15,7 +15,7 @@ import { useCart } from "../../hooks/useAddToCart";
 import { cn } from "../../lib/utils";
 import UserMenu from "./UserMenu";
 import UserAvatar from "./UserAvatar";
-import { STORE_NAME } from "../../constants/brand";
+import BrandLogo from "./BrandLogo";
 import { copy } from "../../constants/copy";
 import { isAdmin, isBuyer, isSeller } from "../../types/auth";
 
@@ -52,10 +52,7 @@ export default function Navbar() {
           onClick={closeMobile}
           className="flex min-w-0 items-center gap-2 rounded-md font-semibold tracking-tight text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
         >
-          <span className="grid size-9 shrink-0 place-items-center rounded-md bg-slate-950 text-sm font-bold text-white">
-            RC
-          </span>
-          <span className="truncate text-lg font-semibold tracking-tight">{STORE_NAME}</span>
+          <BrandLogo />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">

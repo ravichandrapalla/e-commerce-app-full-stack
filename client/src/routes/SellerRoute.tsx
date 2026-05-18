@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import type { ReactElement } from "react";
 import type { RootState } from "../store/store";
 import { isSeller } from "../types/auth";
+import EmailVerifiedRoute from "./EmailVerifiedRoute";
 
 export default function SellerRoute({ children }: { children: ReactElement }) {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -15,5 +16,5 @@ export default function SellerRoute({ children }: { children: ReactElement }) {
     return <Navigate to="/" />;
   }
 
-  return children;
+  return <EmailVerifiedRoute>{children}</EmailVerifiedRoute>;
 }

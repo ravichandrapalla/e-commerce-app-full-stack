@@ -8,8 +8,16 @@ const adminLinks = [
     label: "Products",
   },
   {
+    path: "/admin/products/approvals",
+    label: "Approvals",
+  },
+  {
     path: "/admin/orders",
     label: "Orders",
+  },
+  {
+    path: "/admin/hero",
+    label: "Hero carousel",
   },
   {
     path: "/admin/products/create",
