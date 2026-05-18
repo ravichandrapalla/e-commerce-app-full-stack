@@ -10,7 +10,7 @@
 | **Database** | Neon project `boxinwheels` |
 | **Images** | Cloudinary |
 
-See `scripts/setup-external-services.md` for Resend, Stripe, and domain DNS steps.
+See `scripts/setup-external-services.md` for Brevo, Stripe, and domain DNS steps.
 
 Demo accounts (after `npm run seed:catalog`):
 
@@ -51,7 +51,7 @@ Recommended stack (all have solid free tiers for this project):
    | `JWT_SECRET` | Yes | Long random string (Render can auto-generate) |
    | `CLIENT_URL` | Yes | Vercel URL, e.g. `https://boxinwheels.vercel.app` (comma-separate for previews) |
    | `CLOUDINARY_*` | Yes | From Cloudinary dashboard |
-   | `RESEND_API_KEY` | Optional | Emails log to console if omitted |
+   | `BREVO_API_KEY` | Optional | Emails log to console if omitted |
    | `STRIPE_*` | Optional | Demo checkout works without Stripe |
 
 5. After deploy, note the API URL: `https://<service>.onrender.com`.

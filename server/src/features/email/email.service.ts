@@ -1,5 +1,6 @@
-import { Resend } from "resend";
 import { STORE_EMAIL_FROM, STORE_NAME } from "../../constants/brand";
+
+const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 
 type OrderEmailItem = {
   title: string;
@@ -20,10 +21,9 @@ type OrderStatusEmailPayload = {
   status: string;
 };
 
-const resend =
-  process.env.RESEND_API_KEY && process.env.RESEND_API_KEY.length > 0
-    ? new Resend(process.env.RESEND_API_KEY)
-    : null;
+const brevoConfigured = Boolean(
+  process.env.BREVO_API_KEY && process.env.BREVO_API_KEY.length > 0,
+);
 
 const fromEmail =
   process.env.EMAIL_FROM ||
@@ -33,13 +33,27 @@ const fromEmail =
 const clientUrl = () =>
   process.env.CLIENT_URL?.replace(/\/$/, "") || "http://localhost:5173";
 
+const parseFromAddress = (from: string): { name: string; email: string } => {
+  const angled = from.match(/^(.+?)\s*<([^>]+)>$/);
+  if (angled) {
+    return { name: angled[1].trim(), email: angled[2].trim() };
+  }
+  const emailMatch = from.match(/[\w.+-]+@[\w.-]+\.\w+/);
+  if (emailMatch) {
+    const email = emailMatch[0];
+    const name = from.replace(email, "").trim() || STORE_NAME;
+    return { name, email };
+  }
+  return { name: STORE_NAME, email: from.trim() };
+};
+
 const sendHtmlEmail = async (payload: {
   to: string;
   subject: string;
   html: string;
   previewLabel: string;
 }) => {
-  if (!resend) {
+  if (!brevoConfigured) {
     console.log(payload.previewLabel, {
       to: payload.to,
       subject: payload.subject,
@@ -48,12 +62,26 @@ const sendHtmlEmail = async (payload: {
     return;
   }
 
-  await resend.emails.send({
-    from: fromEmail,
-    to: payload.to,
-    subject: payload.subject,
-    html: payload.html,
+  const sender = parseFromAddress(fromEmail);
+  const res = await fetch(BREVO_API_URL, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+      "api-key": process.env.BREVO_API_KEY!,
+    },
+    body: JSON.stringify({
+      sender,
+      to: [{ email: payload.to }],
+      subject: payload.subject,
+      htmlContent: payload.html,
+    }),
   });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Brevo send failed (${res.status}): ${body}`);
+  }
 };
 
 const formatCurrency = (amount: number) =>

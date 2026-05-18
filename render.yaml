@@ -24,12 +24,12 @@ services:
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
-      - key: RESEND_API_KEY
+      - key: BREVO_API_KEY
         sync: false
       - key: EMAIL_FROM
-        value: BoxInWheels <onboarding@resend.dev>
+        sync: false
       - key: ORDER_EMAIL_FROM
-        value: BoxInWheels <onboarding@resend.dev>
+        sync: false
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_WEBHOOK_SECRET

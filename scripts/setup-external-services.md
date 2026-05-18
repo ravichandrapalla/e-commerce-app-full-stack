@@ -1,18 +1,22 @@
-# BoxInWheels — Resend, Stripe & domain setup
+# BoxInWheels — Brevo, Stripe & domain setup
 
-## 1. Resend (transactional email)
+## 1. Brevo (transactional email)
 
-1. Create a free account: https://resend.com/signup
-2. **API Keys** → Create API Key → copy `re_...`
-3. Add to **local** `server/.env`:
+1. Create a free account: https://www.brevo.com/
+2. **SMTP & API** → **API keys** → Generate → copy the key (`xkeysib-...`)
+3. **Senders, domains & dedicated IPs** → **Senders** → Add a sender (your email). Confirm the verification email Brevo sends you.
+4. Add to **local** `server/.env`:
    ```env
-   RESEND_API_KEY=re_xxxxxxxx
-   EMAIL_FROM=BoxInWheels <onboarding@resend.dev>
+   BREVO_API_KEY=xkeysib-xxxxxxxx
+   EMAIL_FROM=BoxInWheels <you@example.com>
    ```
-   (`onboarding@resend.dev` works on the free tier for testing.)
-4. Add the same key in **Vercel** → project **server** → Settings → Environment Variables → `RESEND_API_KEY`
-5. (Optional) Verify `boxinwheels.com` in Resend → Domains, then set:
-   `EMAIL_FROM=BoxInWheels <orders@boxinwheels.com>`
+   `EMAIL_FROM` must use the **same email** you verified as a Brevo sender (name can differ).
+5. Add the same variables in **Vercel** → project **server** → Settings → Environment Variables:
+   - `BREVO_API_KEY`
+   - `EMAIL_FROM` (and optionally `ORDER_EMAIL_FROM` for order emails)
+6. Remove old `RESEND_API_KEY` from Vercel if it is still set.
+
+Free tier: 300 emails/day. No custom domain required for testing — a verified sender email is enough.
 
 ## 2. Stripe (checkout)
 
